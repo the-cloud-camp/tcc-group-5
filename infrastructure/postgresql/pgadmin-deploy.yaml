@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: group-5-paybox
+  name: pgadmin
+spec:
+  selector:
+    matchLabels:
+      app: pgadmin
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - name: pgadmin4
+          image: dpage/pgadmin4
+          imagePullPolicy: "IfNotPresent"
+          envFrom:
+            - secretRef:
+                name: pgadmin-secret
+          env:
+            - name: TZ
+              value: Asia/Bangkok
+            - name: PGADMIN_PORT
+              value: "80"
+          ports:
+            - containerPort: 80
