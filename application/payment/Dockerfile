@@ -1,28 +1,46 @@
-# Check out https://hub.docker.com/_/node to select a new base image
-FROM node:18-slim
+# Stage 1: Build stage
+FROM node:18-alpine AS builder
 
 # Set to a non-root built-in user `node`
 USER node
 
-# Create app directory (with user `node`)
-RUN mkdir -p /home/node/app
-
+# Create app directory and set it as the working directory
 WORKDIR /home/node/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
+# Copy only package files first to leverage Docker caching
 COPY --chown=node package*.json ./
 
-RUN yarn
+# Install app dependencies
+RUN yarn --production=false
 
-# Bundle app source code
+# Copy the rest of the application code
 COPY --chown=node . .
 
+# Build the application
 RUN npm run build
 
-# Bind to all network interfaces so that it can be mapped to the host OS
-ENV HOST=0.0.0.0 PORT=3000
+# Stage 2: Production stage
+FROM node:18-alpine
 
+# Set to a non-root built-in user `node`
+USER node
+
+# Create app directory and set it as the working directory
+WORKDIR /home/node/app
+
+# Copy only necessary files from the builder stage
+COPY --from=builder --chown=node /home/node/app/package*.json ./
+COPY --from=builder --chown=node /home/node/app/dist ./dist
+
+# Install only production dependencies
+RUN yarn --production
+
+# Set environment variables
+ENV HOST=0.0.0.0 \
+    PORT=3000
+
+# Expose the specified port
 EXPOSE ${PORT}
+
+# Start the application
 CMD [ "node", "." ]
