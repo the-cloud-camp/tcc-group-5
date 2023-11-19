@@ -1,0 +1,43 @@
+version: '3.4'
+
+services:
+  apigateway:
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+
+  authenticationapi:
+    image: ${DOCKER_REGISTRY-}authenticationapi
+    build:
+      context: .
+      dockerfile: AuthenticationApi/Dockerfile
+
+
+  depositapi:
+    image: ${DOCKER_REGISTRY-}depositapi
+    build:
+      context: .
+      dockerfile: DepositApi/Dockerfile
+
+
+  statementapi:
+    image: ${DOCKER_REGISTRY-}statementapi
+    build:
+      context: .
+      dockerfile: StatementApi/Dockerfile
+
+
+  transferapi:
+    image: ${DOCKER_REGISTRY-}transferapi
+    build:
+      context: .
+      dockerfile: TransferApi/Dockerfile
+
+
+  withdrawapi:
+    image: ${DOCKER_REGISTRY-}withdrawapi
+    build:
+      context: .
+      dockerfile: WithdrawApi/Dockerfile
+
