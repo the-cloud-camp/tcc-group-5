@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WithdrawApi": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

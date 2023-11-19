@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "StatementApi": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

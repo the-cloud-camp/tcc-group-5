@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TransferApi": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
