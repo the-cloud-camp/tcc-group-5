@@ -1,0 +1,15 @@
+FROM node:18-alpine
+WORKDIR /app
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_LIFF_ID
+ENV NEXT_PUBLIC_API_URL $NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_LIFF_ID $NEXT_PUBLIC_LIFF_ID
+RUN apk add git
+COPY package.json yarn.lock /app/
+RUN yarn cache clean
+RUN yarn install --network-concurrency 1
+
+COPY . /app
+RUN printenv > .env.local
+RUN yarn build
+CMD [ "yarn", "start" ]
