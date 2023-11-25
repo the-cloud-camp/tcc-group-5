@@ -1,0 +1,15 @@
+name: "webadmin workflow"
+on:
+  push:
+    branches: ["develop"]
+  workflow_dispatch:
+defaults:
+  run:
+    working-directory: ./appplication/paybox-vite
+jobs:
+  containerize:
+    name: Build & Push Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
