@@ -2,32 +2,22 @@
 import React from 'react'
 import { Button, Row, Col, Space, Layout, Form, Input, Checkbox, Typography, message } from 'antd';
 import { SignJWT, importJWK } from 'jose'
-const { Header, Footer, Sider, Content } = Layout;
+import { apiInstance } from '@/utils/apiClient';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
+    const router = useRouter();
     const { Text } = Typography
     const onFinish = async (values) => {
         try {
-            if (values.email === 'admin@test.com' && values.password === '1234') {
-                // Login pass
-                const secretJWK = {
-                    kty: 'oct',
-                    k: process.env.JOSE_SECRET // Replace with your actual base64 encoded secret key
-                }
-
-                const secretKey = await importJWK(secretJWK, 'HS256')
-                const token = await new SignJWT({ email: 'mike@test.com' })
-                    .setProtectedHeader({ alg: 'HS256' })
-                    .setIssuedAt()
-                    .setExpirationTime('1h') // Token expires in 1 hour
-                    .sign(secretKey)
-
-                cookies().set('token', token)
-                redirect('/manage/blog')
-            } else {
-                throw new Error('Login fail')
+            const body = {
+                emailOrMobile: values.email,
+                password: values.password
             }
+            const result = await apiInstance().post('/auth/login', body);
+            console.log('result', result)
             message.success('login success')
+            router.push('/user')
             console.log('Success:', values);
         } catch (err) {
             message.error('Err!!')
@@ -66,12 +56,12 @@ const Page = () => {
                     autoComplete="off"
                 >
                     <Form.Item
-                        label="Username"
-                        name="username"
+                        label="Email"
+                        name="email"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your username!',
+                                message: 'Please input your email!',
                             },
                         ]}
                     >
@@ -111,6 +101,7 @@ const Page = () => {
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>
+                        <Button type='link'>register</Button>
                     </Form.Item>
                 </Form>
             </Col>
