@@ -6,10 +6,19 @@ export function middleware(request) {
         let token = request.cookies.get('token')
         console.log('token', token)
         console.log('IN PROGress')
-        debugger
-        return NextResponse.redirect(new URL('/login', request.url))
-    } catch (err) {
+        // const requestHeaders = new Headers(request.headers)
+        // requestHeaders.set('user', JSON.stringify({ email: payload.email }))
 
+        // const response = NextResponse.next({
+        //     request: {
+        //         headers: requestHeaders,
+        //     },
+        // })
+
+        return NextResponse.next()
+    } catch (err) {
+        console.log('err', err)
+        return NextResponse.redirect(new URL('/login', request.url))
     }
 }
 

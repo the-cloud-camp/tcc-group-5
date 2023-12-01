@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { Form, Row, Col, Typography, Checkbox, Button, Input, message } from 'antd'
-import { apiInstance } from '@/utils/apiClient';
+import { apiInstance } from '../../utils/apiClient';
 import { useRouter } from 'next/navigation'
 
 const page = () => {
@@ -18,7 +18,7 @@ const page = () => {
             return
         } catch (err) {
             console.log('err', err)
-            message.success('Register Error')
+            message.error('Register Error')
             return
         }
     };
@@ -51,7 +51,7 @@ const page = () => {
                 >
                     <Form.Item
                         label="Email"
-                        name="email"
+                        name="emailOrMobile"
                         rules={[
                             {
                                 required: true,

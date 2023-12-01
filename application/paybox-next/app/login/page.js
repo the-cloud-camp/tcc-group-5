@@ -1,25 +1,22 @@
 'use client';
 import React from 'react'
 import { Button, Row, Col, Space, Layout, Form, Input, Checkbox, Typography, message } from 'antd';
-import { SignJWT, importJWK } from 'jose'
 import { apiInstance } from '@/utils/apiClient';
 import { useRouter } from 'next/navigation';
+import { login } from './action';
 
 const Page = () => {
     const router = useRouter();
     const { Text } = Typography
     const onFinish = async (values) => {
         try {
-            const body = {
-                emailOrMobile: values.email,
-                password: values.password
-            }
-            const result = await apiInstance().post('/auth/login', body);
-            console.log('result', result)
+            const result = await login(values)
+            debugger
             message.success('login success')
-            router.push('/user')
             console.log('Success:', values);
+            router.push('/user/me')
         } catch (err) {
+            console.log('err', err)
             message.error('Err!!')
             return
         }
