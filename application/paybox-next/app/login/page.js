@@ -1,44 +1,120 @@
 'use client';
 import React from 'react'
-import { Button, Row, Col, Space, Layout } from 'antd';
+import { Button, Row, Col, Space, Layout, Form, Input, Checkbox, Typography, message } from 'antd';
+import { SignJWT, importJWK } from 'jose'
 const { Header, Footer, Sider, Content } = Layout;
-const headerStyle = {
-    textAlign: 'center',
-    color: '#fff',
-    height: 64,
-    paddingInline: 50,
-    lineHeight: '64px',
-    backgroundColor: '#7dbcea',
-};
-const contentStyle = {
-    textAlign: 'center',
-    minHeight: 120,
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#108ee9',
-};
-const siderStyle = {
-    textAlign: 'center',
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#3ba0e9',
-};
-const footerStyle = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#7dbcea',
-};
 
 const Page = () => {
+    const { Text } = Typography
+    const onFinish = async (values) => {
+        try {
+            if (values.email === 'admin@test.com' && values.password === '1234') {
+                // Login pass
+                const secretJWK = {
+                    kty: 'oct',
+                    k: process.env.JOSE_SECRET // Replace with your actual base64 encoded secret key
+                }
+
+                const secretKey = await importJWK(secretJWK, 'HS256')
+                const token = await new SignJWT({ email: 'mike@test.com' })
+                    .setProtectedHeader({ alg: 'HS256' })
+                    .setIssuedAt()
+                    .setExpirationTime('1h') // Token expires in 1 hour
+                    .sign(secretKey)
+
+                cookies().set('token', token)
+                redirect('/manage/blog')
+            } else {
+                throw new Error('Login fail')
+            }
+            message.success('login success')
+            console.log('Success:', values);
+        } catch (err) {
+            message.error('Err!!')
+            return
+        }
+
+    };
+    const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+    };
+
     return (
-        <Layout style={{height: "100vh"}}>
-            <Sider style={siderStyle}>Sider</Sider>
-            <Layout>
-                <Header style={headerStyle}>Header</Header>
-                <Content style={contentStyle}>Content</Content>
-                <Footer style={footerStyle}>Footer</Footer>
-            </Layout>
-        </Layout>
+        <Row justify={'center'}>
+            <Col span={24} >
+                <Row justify={'center'} style={{ marginBottom: "10px" }}>
+                    <Text>Paybox Login</Text>
+                </Row>
+            </Col>
+            <Col>
+                <Form
+                    name="basic"
+                    labelCol={{
+                        span: 8,
+                    }}
+                    wrapperCol={{
+                        span: 16,
+                    }}
+                    style={{
+                        maxWidth: 600,
+                    }}
+                    initialValues={{
+                        remember: true,
+                    }}
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                    autoComplete="off"
+                >
+                    <Form.Item
+                        label="Username"
+                        name="username"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your username!',
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your password!',
+                            },
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="remember"
+                        valuePropName="checked"
+                        wrapperCol={{
+                            offset: 8,
+                            span: 16,
+                        }}
+                    >
+                        <Checkbox>Remember me</Checkbox>
+                    </Form.Item>
+
+                    <Form.Item
+                        wrapperCol={{
+                            offset: 8,
+                            span: 16,
+                        }}
+                    >
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Col>
+        </Row>
     )
 }
 
