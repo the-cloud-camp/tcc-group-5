@@ -6,6 +6,7 @@ export function middleware(request) {
         let token = request.cookies.get('token')
         console.log('token', token)
         console.log('IN PROGress')
+        debugger
         return NextResponse.redirect(new URL('/login', request.url))
     } catch (err) {
 
@@ -13,5 +14,5 @@ export function middleware(request) {
 }
 
 export const config = {
-    matcher: '/home/:path*',
+    matcher: ['/home/:path*', '/user/:path*'],
 }

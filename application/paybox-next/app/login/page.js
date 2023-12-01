@@ -101,7 +101,14 @@ const Page = () => {
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>
-                        <Button type='link'>register</Button>
+                        <Button type='link' onClick={() => {
+                            console.log('first')
+                            router.push('/register')
+                            return
+                        }}
+                        >
+                            register
+                        </Button>
                     </Form.Item>
                 </Form>
             </Col>

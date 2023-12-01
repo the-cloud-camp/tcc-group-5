@@ -1,8 +1,11 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
+import { Row } from 'antd'
 
 const UserId = ({ params }) => {
+    const [userData, setUserData] = useState({});
     return (
-        <div>User id: {params.id}</div>
+        <Row>User id: {params.id}</Row>
     )
 }
 
