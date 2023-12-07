@@ -1,20 +1,32 @@
-FROM node:18-alpine
+# Stage 1: Build Stage
+FROM node:18-alpine AS build
 
-# Path: /app
+# Set working directory
 WORKDIR /app
 
-# Path: /app/package.json
-COPY package.json .
+# Copy only package.json and package-lock.json to leverage Docker cache
+COPY package*.json ./
 
-# Path: /app
+# Install dependencies
 RUN npm install
 
-# Path: /app
+# Copy the rest of the application files
 COPY . .
 
+# Generate Prisma client
 RUN npx prisma generate
 
-EXPOSE 8000
+# Stage 2: Production Stage
+FROM node:18-alpine
 
-# Path: /app
-CMD [ "npm",  "start"]
+# Set working directory
+WORKDIR /app
+
+# Copy only necessary files from the build stage
+COPY --from=build /app .
+
+# Expose the port
+EXPOSE 5001
+
+# Command to run the application
+CMD ["npm", "start"]
