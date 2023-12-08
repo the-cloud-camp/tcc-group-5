@@ -1,8 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: group-5-paybox
-  name: paybox-5-ingress
+  name: paybox-ingress
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: HTTP
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -12,10 +11,10 @@ spec:
     - host: tcc-01.th1.proen.cloud
       http:
         paths:
-          - backend:
+          - path: "/group-5-dev/authenticationapi(/|$)(.*)"
+            pathType: Prefix
+            backend:
               service:
-                name: payment
+                name: authenticationapi
                 port:
                   number: 80
-            path: "/group-5-paybox/paymentapi(/|$)(.*)"
-            pathType: Prefix
