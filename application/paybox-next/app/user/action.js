@@ -13,11 +13,7 @@ export async function login(values) {
         const result = await apiInstance().post('/auth/login', body);
         console.log('result', result.data.accessToken)
         debugger
-        localStorage.setItem();
-        window.localStorage.setItem('token', result.data.accessToken)
-        const ff = cookies().set('token', result.data.accessToken)
-        // console.log('token', ff)
-        // console.log('Success:', values);
+        cookies().set('token', result.data.accessToken);
         return { status: "Success" }
     } catch (err) {
         console.log('err login', err)

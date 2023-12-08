@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 
 const page = ({}) => {
     return (
-        <div>page User</div>
+        <div>page User </div>
     )
 }
 

@@ -12,9 +12,11 @@ const Page = () => {
         try {
             const result = await login(values)
             debugger
-            message.success('login success')
-            console.log('Success:', values);
-            router.push('/user/me')
+            if (result?.status === 'Success') {
+                message.success('login success')
+                console.log('Success:', values);
+                router.push('/user/me')
+            }
         } catch (err) {
             console.log('err', err)
             message.error('Err!!')
