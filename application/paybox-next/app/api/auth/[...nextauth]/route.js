@@ -1,35 +1,76 @@
 import NextAuth from "next-auth"
-import GithubProvider from "next-auth/providers/github"
-import { CredentialsProvider } from "next-auth/providers"
-export const authOptions = {
-    // Configure one or more authentication providers
+import CredentialsProvider from "next-auth/providers/credentials"
+import { apiInstance } from '@/utils/apiClient'
+
+const login = async (values) => {
+    try {
+        console.log('values login: ', values)
+        const body = {
+            emailOrMobile: values.emailOrMobile,
+            password: values.password
+        }
+        debugger
+        const result = await apiInstance().post('auth/login', body).then(res => res.data);
+        console.log('Auth Success~~')
+        return Promise.resolve({ ...result });
+    } catch (err) {
+        console.log('err auth login', err)
+        return Promise.reject(err);
+    }
+}
+
+const handler = NextAuth({
     providers: [
         CredentialsProvider({
-            // The name to display on the sign in form (e.g. "Sign in with...")
             name: "Credentials",
-            // `credentials` is used to generate a form on the sign in page.
-            // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-            // e.g. domain, username, password, 2FA token, etc.
-            // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-                email: { label: "email", type: "text", placeholder: "jsmith" },
+                emailOrMobile: { label: "email", type: "text", placeholder: "email" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-                // Add logic here to look up the user from the credentials supplied
-                const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
-
-                if (user) {
-                    // Any object returned will be saved in `user` property of the JWT
-                    return user
+                console.log('req', req)
+                debugger
+                const user = { id: "1", name: "J Smith", email: "jsmith@example.com", kio: 'ioio' }
+                const result = await login(credentials);
+                // console.log('result auth', result)
+                if (result) {
+                    debugger
+                    return result.user
                 } else {
-                    // If you return null then an error will be displayed advising the user to check their details.
                     return null
-
-                    // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
                 }
-            }
+                return null
+            },
         })
     ],
-}
-export default NextAuth(authOptions)
+    pages: {
+        // signIn: '/login',
+        signOut: '/auth/singout'
+    },
+    callbacks: {
+        async jwt({ user, profile, session, account, token, trigger }) {
+            console.log('jwt call', { user, profile, session, account, token, trigger });
+            return token
+        },
+        async signIn({ user, account, email, credentials, profile }) {
+            console.log('user', user)
+            console.log('account', account)
+            console.log('email', email)
+            console.log('credentials', credentials)
+            console.log('profile', profile)
+            return true
+        },
+        async session({ session, user, token, trigger, newSession }) {
+
+            console.log('session callback: ', session)
+            console.log('user callback: ', user);
+            console.log('token call: ', token)
+            return {
+                ...session,
+                hi: 'hello world!!'
+            }
+        }
+    }
+})
+
+export { handler as GET, handler as POST }
