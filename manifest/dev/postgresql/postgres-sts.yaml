@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres
+  name: postgres-argo-sts
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: postgres-argo
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres-argo
     spec:
       containers:
-        - name: postgres
+        - name: postgres-argo-container
           image: postgres:16.0
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 5432
           envFrom:
             - secretRef:
-                name: postgres-secret
+                name: postgres-secret-argo
           env:
             - name: TZ
               value: Asia/Bangkok
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgredb
+              name: postgredb-argo-vol
       volumes:
-        - name: postgredb
+        - name: postgredb-argo-vol
           persistentVolumeClaim:
-            claimName: paybox-postgres-pvc
+            claimName: paybox-postgres-pvc-argo

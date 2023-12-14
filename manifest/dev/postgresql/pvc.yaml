@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: paybox-postgres-pvc
+  name: paybox-postgres-pvc-argo
 spec:
   accessModes:
     - ReadWriteOnce
@@ -9,5 +9,5 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  volumeName: paybox-postgres-pv
-  storageClassName: paybox-local-storage
+  volumeName: paybox-postgres-pv-argo
+  storageClassName: paybox-local-storage-argo

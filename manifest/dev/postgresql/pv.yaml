@@ -1,15 +1,15 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: paybox-postgres-pv
+  name: paybox-postgres-pv-argo
   labels:
-    app: postgres
+    app: postgres-argo
 spec:
   capacity:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: paybox-local-storage
+  storageClassName: paybox-local-storage-argo
   hostPath:
     path: /opt/app/group-5-paybox
