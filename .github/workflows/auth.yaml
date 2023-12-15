@@ -2,9 +2,9 @@ name: "Develop"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - workflow
+  workflow_run:
+    workflows: ["docker-setup"]
+    types: [completed]
 
 jobs:
   application:
