@@ -29,8 +29,6 @@ jobs:
       - name: Pull Image
         continue-on-error: true
         run: |
-          git --version
-          git branch -a
           git checkout -f develop
           git show HEAD | grep commit | head -n 1 | cut -d " " -f 2
           IMAGE_TAG=$(git log -1 | grep commit | head -n 1 | cut -d " " -f 2)
@@ -39,3 +37,32 @@ jobs:
           docker pull ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG
           echo "List Images"
           docker images
+
+  image-tag-test:
+    name: Image Tag Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Pull Image
+        #continue-on-error: true
+        run: |
+          git checkout -f workflow
+          git show HEAD | grep commit | head -n 1 | cut -d " " -f 2
+          IMAGE_TAG=$(git log -2 | grep commit | tail -n 1 | cut -d " " -f 2)
+          echo "Docker Login"
+          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+          docker pull ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG
+          echo "List Images"
+          docker images
+
+      - name: Retag Image
+        run: |
+          cd paybox-auth-api
+          echo $IMAGE_TAG
+          NEW_TAG=$(yq -oy '.version' package.json)
+          docker tag ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG ${{vars.APP_IMAGE}}/auth:$NEW_TAG
+          docker push ${{vars.APP_IMAGE}}/auth:$NEW_TAG
