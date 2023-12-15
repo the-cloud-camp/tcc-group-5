@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: apps-group-5
+  name: group-5-auth
   namespace: argocd
 spec:
   project: default
   source: 
     repoURL: git@github.com:the-cloud-camp/tcc-group-5.git
     targetRevision: argocd
-    path: manifest/dev
-    directory:
-      recurse: true
+    path: manifest/dev/authenticationapi
+    #directory:
+    #  recurse: true
   destination:
     name: in-cluster
     namespace: group-5-dev
