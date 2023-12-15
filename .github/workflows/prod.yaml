@@ -53,7 +53,10 @@ jobs:
         run: |
           git checkout -f workflow
           git show HEAD | grep commit | head -n 1 | cut -d " " -f 2
+          IMAGE_TAG=$(git log -2 | grep commit | tail -n 1 | cut -d " " -f 2)
           echo "IMAGE_TAG=$(git log -2 | grep commit | tail -n 1 | cut -d " " -f 2)" >> $GITHUB_ENV
+          echo "TEST_TAG=$IMAGE_TAG" >>$GITHUB_ENV
+
           echo "Docker Login"
           docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
           docker pull ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG
@@ -66,6 +69,9 @@ jobs:
           echo $IMAGE_TAG
           echo ${{ steps.image-tag-test.outputs.IMAGE_TAG }}
           echo ${{ steps.image-tag.outputs.IMAGE_TAG }}
+
+          echo ${{ steps.image-tag-test.outputs.TEST_TAG }}
+          echo ${{ steps.image-tag.outputs.TEST_TAG }}
 
           NEW_TAG=$(yq -oy '.version' package.json)
           echo $NEW_TAG
