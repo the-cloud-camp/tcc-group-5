@@ -22,55 +22,53 @@ const login = async (values) => {
 const handler = NextAuth({
     providers: [
         CredentialsProvider({
-            name: "Credentials",
+            name: "Paybox",
             credentials: {
                 emailOrMobile: { label: "email", type: "text", placeholder: "email" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
                 console.log('req', req)
-                debugger
-                const user = { id: "1", name: "J Smith", email: "jsmith@example.com", kio: 'ioio' }
+                // const user = { id: "1", name: "J Smith", email: "jsmith@example.com", kio: 'ioio' }
                 const result = await login(credentials);
-                // console.log('result auth', result)
                 if (result) {
-                    debugger
+                    console.log('result', result)
                     return result.user
-                } else {
-                    return null
                 }
                 return null
             },
         })
     ],
     pages: {
-        // signIn: '/login',
-        signOut: '/auth/singout'
+        signIn: '/login',
+        // signOut: '/auth/singout'
     },
     callbacks: {
         async jwt({ user, profile, session, account, token, trigger }) {
-            console.log('jwt call', { user, profile, session, account, token, trigger });
+            console.log('jwt call 2', { user, profile, session, account, token, trigger });
+            if (user) {
+                token.user = user
+            }
             return token
         },
         async signIn({ user, account, email, credentials, profile }) {
-            console.log('user', user)
-            console.log('account', account)
-            console.log('email', email)
-            console.log('credentials', credentials)
-            console.log('profile', profile)
             return true
         },
         async session({ session, user, token, trigger, newSession }) {
-
-            console.log('session callback: ', session)
-            console.log('user callback: ', user);
-            console.log('token call: ', token)
+            console.log('session callback: ', { session, user, token, trigger, newSession })
+            if (token.id) {
+                session.user = { ...session.user, ...token.user }
+            }
             return {
                 ...session,
                 hi: 'hello world!!'
             }
         }
-    }
+    },
+    session: {
+        strategy: 'jwt'
+    },
+    secret: process.env.NEXTAUTH_SECRET
 })
 
 export { handler as GET, handler as POST }

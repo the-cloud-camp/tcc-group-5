@@ -14,7 +14,7 @@ const page = () => {
             const result = await apiInstance().post('/auth/register', values)
             console.log('result', result)
             message.success('Register Success');
-            router.push('/user/')
+            router.push('/login')
             return
         } catch (err) {
             console.log('err', err)
