@@ -1,0 +1,81 @@
+name: "develop"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - workflow
+
+jobs:
+  containerize:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+
+    # needs: analyze
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.APP_IMAGE }}
+          tags: ${{ github.sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./application/paybox-auth-api
+          file: ./application/paybox-auth-api/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
+#  deploy-to-develop:
+#    needs: containerize
+#    runs-on: ubuntu-latest
+#    environment: develop
+
+#    defaults:
+#      run:
+#        working-directory: ./manifest/dev
+
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+
+#     - name: Set up Kube Config
+#        run: |
+#          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+#          mkdir -p $HOME/.kube
+#          mv kubeconfig $HOME/.kube/config
+
+#      - name: Set KUBE_CONTEXT
+#        run: |
+#          kubectl config use-context "${{ secrets.KUBE_CONTEXT }}"
+
+#      - name: Update Deployment to k8s
+#        run: |
+#          export APP_IMAGE_URL=${{ vars.APP_IMAGE }}:${{ github.sha }}
+#          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE_URL)' deployment.yaml
+#          kubectl apply -f deployment.yaml -n ${{ secrets.KUBE_NAMESPACE }}
+
+#      - name: Commit and push changes
+#        run: |
+#          git checkout develop
+#          git config --local user.email "actions@github.com"
+#          git config --local user.name "GitHub Actions"
+#          git add deployment.yaml
+#          git commit -m "bot: update deployment ${{ github.sha }}"
+#          git push
