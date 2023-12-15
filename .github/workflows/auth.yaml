@@ -3,7 +3,7 @@ name: "Develop"
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["docker-setup"]
+    workflows: ["Docker Setup"]
     types: [completed]
 
 jobs:
