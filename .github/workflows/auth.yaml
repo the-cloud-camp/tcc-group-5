@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Application Name
-        runs: echo "Authen Service"
+        run: echo "Authen Service"
 
   containerize:
     name: Build & Push Docker Image
