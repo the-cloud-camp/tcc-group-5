@@ -38,9 +38,11 @@ jobs:
           file: ./application/paybox-auth-api/Dockerfile
           push: true
           #tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{vars.APP_IMAGE}}/auth:${{ steps.meta.outputs.tags }}
+          #tags: ${{vars.APP_IMAGE}}/auth:${{ steps.meta.outputs.tags }}
           #tags: "${{vars.APP_IMAGE}}/auth:${GITHUB_SHA}"
+
           #tags: ${{vars.APP_IMAGE}}/auth:latest
+          tags: ${{vars.APP_IMAGE}}/auth:${{ github.sha }}
 
 #  deploy-to-develop:
 #    needs: containerize
