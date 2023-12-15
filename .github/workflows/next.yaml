@@ -1,4 +1,4 @@
-name: Web Admin Service
+name: Next Service
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./application/paybox-vite
-          file: ./application/paybox-vite/Dockerfile
+          context: ./application/paybox-next
+          file: ./application/paybox-next/Dockerfile
           push: true
-          tags: ${{vars.APP_IMAGE}}/webadmin:${{ github.sha }}
+          tags: ${{vars.APP_IMAGE}}/next:${{ github.sha }}
