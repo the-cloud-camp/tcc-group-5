@@ -3,7 +3,7 @@ name: Next Service
 on:
   push:
      branches:
-      - workflow
+      - workflo
   workflow_dispatch:
 
 jobs:

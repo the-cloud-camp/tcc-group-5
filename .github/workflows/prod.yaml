@@ -48,11 +48,12 @@ jobs:
           fetch-depth: 0
 
       - name: Pull Image
+        id: image-tag
         #continue-on-error: true
         run: |
           git checkout -f workflow
           git show HEAD | grep commit | head -n 1 | cut -d " " -f 2
-          IMAGE_TAG=$(git log -2 | grep commit | tail -n 1 | cut -d " " -f 2)
+          echo "IMAGE_TAG=$(git log -2 | grep commit | tail -n 1 | cut -d " " -f 2)" >> $GITHUB_ENV
           echo "Docker Login"
           docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
           docker pull ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG
@@ -63,6 +64,11 @@ jobs:
         run: |
           cd paybox-auth-api
           echo $IMAGE_TAG
+          echo ${{ steps.image-tag-test.outputs.IMAGE_TAG }}
+          echo ${{ steps.image-tag.outputs.IMAGE_TAG }}
+
           NEW_TAG=$(yq -oy '.version' package.json)
-          docker tag ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG ${{vars.APP_IMAGE}}/auth:$NEW_TAG
-          docker push ${{vars.APP_IMAGE}}/auth:$NEW_TAG
+          echo $NEW_TAG
+
+          echo "docker tag ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG ${{vars.APP_IMAGE}}/auth:$NEW_TAG"
+          echo "docker push ${{vars.APP_IMAGE}}/auth:$NEW_TAG"
