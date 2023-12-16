@@ -9,8 +9,16 @@ spec:
   ingressClassName: nginx
   rules:
     - host: tcc-01.th1.proen.cloud
+
       http:
         paths:
+          - path: "/group-5-dev/pgadmin(/|$)(.*)"
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 80
           - path: "/group-5-dev/authenticationapi(/|$)(.*)"
             pathType: Prefix
             backend:
