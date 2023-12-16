@@ -4,8 +4,8 @@ import { Form, Row, Col, Typography, Checkbox, Button, Input, message } from 'an
 import { apiInstance } from '../../utils/apiClient';
 import { useRouter } from 'next/navigation'
 
-const page = () => {
-    const router = useRouter()
+const RegisterPage = () => {
+    const router = useRouter();
     const { Text } = Typography;
 
     const onFinish = async (values) => {
@@ -123,4 +123,4 @@ const page = () => {
     )
 }
 
-export default page
+export default RegisterPage
