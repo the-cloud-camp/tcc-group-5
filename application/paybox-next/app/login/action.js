@@ -1,25 +1,20 @@
 'use server'
-import { cookies } from 'next/headers'
-import { message } from 'antd'
+// import { cookies } from 'next/headers'
 import { apiInstance } from '@/utils/apiClient';
 
-export async function login(values) {
+export const login = async (values) => {
     try {
+        console.log('values login: ', values)
         const body = {
-            emailOrMobile: values.email,
+            emailOrMobile: values.emailOrMobile,
             password: values.password
         }
-        console.log('body', body)
-        const result = await apiInstance().post('/auth/login', body);
-        console.log('result', result.data.accessToken)
         debugger
-        localStorage.setItem();
-        window.localStorage.setItem('token', result.data.accessToken)
-        const ff = cookies().set('token', result.data.accessToken)
-        // console.log('token', ff)
-        // console.log('Success:', values);
-        return { status: "Success" }
+        const result = await apiInstance().post('auth/login', body).then(res => res.data);
+        console.log('Auth Success~~')
+        return Promise.resolve({ ...result });
     } catch (err) {
-        console.log('err login', err)
+        console.log('err auth login', err)
+        return Promise.reject(err);
     }
 }

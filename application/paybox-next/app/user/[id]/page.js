@@ -1,11 +1,11 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { Button, Row } from 'antd'
-import { useUser } from '@/utils/apiClient';
-import axios from 'axios'
+// import { useUser } from '@/utils/apiClient';
+// import axios from 'axios'
 
 const UserId = ({ params }) => {
-    const { count, inc, apiInstance } = useUser()
+    // const { count, inc, apiInstance } = useUser()
     const [userData, setUserData] = useState({
         firstname: 'test',
         lastname: 'test',
@@ -25,14 +25,13 @@ const UserId = ({ params }) => {
         }
     }
     useEffect(() => {
-        // inc()
         initUserData();
-    }, [params.id]);
+    }, [params.id, initUserData]);
 
     return (
         <Row>
             User id: {params.id}
-            {count}
+            {/* {count} */}
             <Button onClick={inc}>hi</Button>
             {/* {userData} */}
         </Row>
