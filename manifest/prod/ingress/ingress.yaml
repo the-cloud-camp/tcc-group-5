@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: paybox-ingress-prod
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: tcc-01.th1.proen.cloud
+      http:
+        paths:
+          - path: "/group-5-prod/authenticationapi(/|$)(.*)"
+            pathType: Prefix
+            backend:
+              service:
+                name: authenticationapi-argo-service-prod
+                port:
+                  number: 80

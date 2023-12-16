@@ -7,7 +7,7 @@ spec:
   project: default
   source: 
     repoURL: git@github.com:the-cloud-camp/tcc-group-5.git
-    targetRevision: argocd
+    targetRevision: develop
     path: manifest/dev/ingress
     #directory:
     #  recurse: true
