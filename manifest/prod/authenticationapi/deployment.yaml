@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authenticationapi-argo-deployment-prod
+spec:
+  selector:
+    matchLabels:
+      app: authenticationapi-argo-prod
+  template:
+    metadata:
+      labels:
+        app: authenticationapi-argo-prod
+    spec:
+      containers:
+        - name: authenticationapi-argo-container-prod
+          image: zaserzafear/tcc-group-5-paybox-authenticationapi:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 250m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          ports:
+            - containerPort: 5001
+          env:
+            - name: TZ
+              value: Asia/Bangkok
+            - name: DATABASE_URL
+              value: "postgres://paybox:group-5@postgres-0.postgres:5432/paybox"
+            - name: JWT_EXPIRE
+              value: 1d
+            - name: JWT_SECRET_KEY
+              value: G5aIoG4QG1rLZ6qyv6RLTSggT7Tno8XH
+            - name: PORT
+              value: "5001"

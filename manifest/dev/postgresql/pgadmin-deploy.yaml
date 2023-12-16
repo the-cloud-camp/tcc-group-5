@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pgadmin
+  name: pgadmin-argo-deployment
 spec:
   selector:
     matchLabels:
-      app: pgadmin
+      app: pgadmin-argo
   replicas: 1
   template:
     metadata:
       labels:
-        app: pgadmin
+        app: pgadmin-argo
     spec:
       containers:
-        - name: pgadmin4
+        - name: pgadmin4-argo-container
           image: dpage/pgadmin4
           imagePullPolicy: "IfNotPresent"
           envFrom:
