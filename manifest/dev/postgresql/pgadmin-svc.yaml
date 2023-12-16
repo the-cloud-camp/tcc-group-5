@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pgadmin-argo-service
+  name: pgadmin-service
+  namespace: group-5-dev
   labels:
-    app: pgadmin-argo
+    app: pgadmin
 spec:
   type: ClusterIP
   ports:
     - port: 80
   selector:
-    app: pgadmin-argo
+    app: pgadmin

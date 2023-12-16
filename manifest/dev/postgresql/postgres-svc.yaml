@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-argo-service
+  name: postgres-service
+  namespace: group-5-dev
   labels:
-    app: postgres-argo
+    app: postgres
 spec:
   type: ClusterIP
   clusterIP: None
   ports:
     - port: 5432
   selector:
-    app: postgres-argo
+    app: postgres
