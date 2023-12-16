@@ -11,6 +11,9 @@ on:
       - 'main'
   workflow_dispatch:
 
+env:
+  CHECKOUT_BRANCH: workflow
+
 defaults:
   run:
     working-directory: ./application
@@ -51,7 +54,7 @@ jobs:
         id: image-tag
         #continue-on-error: true
         run: |
-          git checkout -f workflow
+          git checkout -f $CHECKOUT_BRANCH
           git show HEAD | grep commit | head -n 1 | cut -d " " -f 2
           IMAGE_TAG=$(git log -2 | grep commit | tail -n 1 | cut -d " " -f 2)
           echo "IMAGE_TAG=$(git log -2 | grep commit | tail -n 1 | cut -d " " -f 2)" >> $GITHUB_ENV
@@ -67,14 +70,8 @@ jobs:
         run: |
           cd paybox-auth-api
           echo $IMAGE_TAG
-          echo ${{ steps.image-tag-test.outputs.IMAGE_TAG }}
-          echo ${{ steps.image-tag.outputs.IMAGE_TAG }}
-
-          echo ${{ steps.image-tag-test.outputs.TEST_TAG }}
-          echo ${{ steps.image-tag.outputs.TEST_TAG }}
-
           NEW_TAG=$(yq -oy '.version' package.json)
           echo $NEW_TAG
 
-          echo "docker tag ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG ${{vars.APP_IMAGE}}/auth:$NEW_TAG"
-          echo "docker push ${{vars.APP_IMAGE}}/auth:$NEW_TAG"
+          docker tag ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG ${{vars.APP_IMAGE}}/auth:$NEW_TAG
+          docker push ${{vars.APP_IMAGE}}/auth:$NEW_TAG
