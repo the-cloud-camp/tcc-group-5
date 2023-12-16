@@ -11,10 +11,6 @@ module.exports = async (req, res, next) => {
     const token = authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.JWT_SECRET_KEY || '1q2w3e4r5t6y7u8i9o0p');
 
-    if (!user) {
-      return next(createError('unauthenticated', 401));
-    }
-    delete user.password;
     req.source = payload.userId;
     next();
   } catch (err) {
