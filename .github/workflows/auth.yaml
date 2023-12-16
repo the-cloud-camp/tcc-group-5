@@ -2,8 +2,10 @@ name: Authetication Service
 
 on:
   push:
-     branches:
+    branches:
       - workflow
+    paths:
+      - application/paybox-auth-api/**
   workflow_dispatch:
 
 jobs:

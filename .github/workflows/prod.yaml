@@ -3,7 +3,7 @@ name: PR
 on:
   push:
     branches:
-      - workflow
+      - workflo
   pull_request:
     types: 
       - closed
@@ -30,11 +30,11 @@ jobs:
           fetch-depth: 0
 
       - name: Pull Image
-        continue-on-error: true
+        #continue-on-error: true
         run: |
           git checkout -f develop
           git show HEAD | grep commit | head -n 1 | cut -d " " -f 2
-          IMAGE_TAG=$(git log -1 | grep commit | head -n 1 | cut -d " " -f 2)
+          IMAGE_TAG=$(git log -1 --format=%H)
           echo "Docker Login"
           docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
           docker pull ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG
@@ -74,4 +74,4 @@ jobs:
           echo $NEW_TAG
 
           docker tag ${{vars.APP_IMAGE}}/auth:$IMAGE_TAG ${{vars.APP_IMAGE}}/auth:$NEW_TAG
-          docker push ${{vars.APP_IMAGE}}/auth:$NEW_TAG
+          docker push ${{vars.APP_IMAGE}}/auth:v$NEW_TAG

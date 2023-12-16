@@ -2,8 +2,10 @@ name: Next Service
 
 on:
   push:
-     branches:
-      - workflo
+    branches:
+      - workflow
+    paths:
+      - application/paybox-next/**
   workflow_dispatch:
 
 jobs:
