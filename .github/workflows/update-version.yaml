@@ -22,7 +22,7 @@ defaults:
 
 jobs:
   set-version:
-    if:  startsWith(github.base_ref, $DESTINATION_BRANCH)
+    if:  startsWith(github.base_ref, env.DESTINATION_BRANCH)
     name: Set Version
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +43,7 @@ jobs:
         run: echo "$MAJOR.$MINOR.$BUILD"
 
   update-version:
-    if:  startsWith(github.base_ref, $DESTINATION_BRANCH)
+    if:  startsWith(github.base_ref, ${{ env.DESTINATION_BRANCH }})
     name: Update Version
     runs-on: ubuntu-latest
     steps:    
