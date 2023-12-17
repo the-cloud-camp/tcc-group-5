@@ -1,14 +1,19 @@
 name: Update Version
 
 on:
-  push:
-    tags:
-      - v*
-    branches:
-      - workflo
+  #push:
+    #tags:
+    #  - v*
+    #branches:
+    #  - workflow #develop
+  pull_request:
+    types: 
+      #- closed
+      - opened
   workflow_dispatch:
 
 env:
+  DESTINATION_BRANCH: develop
   VERSION_FILE: test-package.json
 
 defaults:
@@ -16,23 +21,32 @@ defaults:
     working-directory: ./application
 
 jobs:
-  version:
-    name: Version
+  set-version:
+    if:  startsWith(github.base_ref, $DESTINATION_BRANCH)
+    name: Set Version
     runs-on: ubuntu-latest
     steps:
       - name: Check Current Version
         run: |
-          CURRENT_VERSION=$(yq -oy '.version' $VERSION_FILE)
+          CURRENT_VERSION=$(yq '.version' $VERSION_FILE)
           echo "CURRENT_VERSION=$CURRENT_VERSION"
-          echo "CURRENT_VERSION_2=$(yq -oy '.version' $VERSION_FILE)"
+          echo "CURRENT_VERSION_2=$(yq '.version' $VERSION_FILE)"
 
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
-          echo "CURRENT_VERSION_2=$(yq -oy '.version' $VERSION_FILE)" >> $GITHUB_ENV
+          echo "CURRENT_VERSION_2=$(yq '.version' $VERSION_FILE)" >> $GITHUB_ENV
 
           echo "MAJOR=$(echo $CURRENT_VERSION | cut -d "." -f 1)" >> $GITHUB_ENV
           echo "MINOR=$(echo $CURRENT_VERSION | cut -d "." -f 2)" >> $GITHUB_ENV
           echo "BUILD=$(echo $CURRENT_VERSION | cut -d "." -f 3)" >> $GITHUB_ENV
 
+      - name: Show Current Version
+        run: echo "$MAJOR.$MINOR.$BUILD"
+
+  update-version:
+    if:  startsWith(github.base_ref, $DESTINATION_BRANCH)
+    name: Update Version
+    runs-on: ubuntu-latest
+    steps:    
       - name: Update Version
         run: |
           echo $CURRENT_VERSION
@@ -40,6 +54,3 @@ jobs:
 
           COMMIT_CONVENTION=$(git log -1 --format%s | cut -d ":" -f 1)
           echo "COMMIT_CONVENTION is $COMMIT_CONVENTION"
-
-          if [[ "$COMMIT_CONVENTION" == "feat" ]]; then
-            echo "this feat"

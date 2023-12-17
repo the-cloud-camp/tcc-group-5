@@ -1,4 +1,4 @@
-name: Next Service
+name: Frontend Service
 
 on:
   push:
