@@ -6,14 +6,16 @@ on:
     #  - v*
     #branches:
     #  - workflow #develop
-  pull_request:
+  pull_request_target:
     types: 
       #- closed
       - opened
+      - reopened
+    branches:
+      - develop
   workflow_dispatch:
 
 env:
-  DESTINATION_BRANCH: develop
   VERSION_FILE: test-package.json
 
 defaults:
@@ -22,7 +24,6 @@ defaults:
 
 jobs:
   check-version:
-    if:  startsWith(github.base_ref, env.DESTINATION_BRANCH)
     name: Check Version
     runs-on: ubuntu-latest
     steps:
@@ -47,7 +48,6 @@ jobs:
           echo "The current version: $MAJOR.$MINOR.$BUILD"
 
   update-version:
-    if:  startsWith(github.base_ref, env.DESTINATION_BRANCH)
     name: Update Version
     runs-on: ubuntu-latest
     steps:
@@ -96,7 +96,6 @@ jobs:
           yq -i '.version=strenv(UPDATED_VERSION)' $VERSION_FILE
 
   update-repo: # TODO: change file name in git add and branch in git push
-    if:  startsWith(github.base_ref, env.DESTINATION_BRANCH)
     name: Commit and Push
     runs-on: ubuntu-latest
     steps:    
