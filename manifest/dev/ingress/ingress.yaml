@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: paybox-ingress
+  namespace: group-5-dev
+
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: HTTP
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -23,6 +25,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: authenticationapi-argo-service
+                name: authenticationapi-service
+                port:
+                  number: 80
+          - path: "/group-5-dev/webadmin(/|$)(.*)"
+            pathType: Prefix
+            backend:
+              service:
+                name: webadmin-service
                 port:
                   number: 80
