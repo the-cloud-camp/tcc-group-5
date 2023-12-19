@@ -14,7 +14,7 @@ const login = async (values) => {
         console.log('Auth Success~~')
         return Promise.resolve({ ...result });
     } catch (err) {
-        console.log('err auth login', err)
+        console.log('err auth login: ', err)
         return Promise.reject(err);
     }
 }
@@ -40,7 +40,7 @@ const handler = NextAuth({
         })
     ],
     pages: {
-        signIn: '/login',
+        // signIn: '/login',
         // signOut: '/auth/singout'
     },
     callbacks: {
