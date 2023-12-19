@@ -54,6 +54,8 @@ jobs:
   update-version:
     name: Update Version
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs: check-version
     steps:
       - name: Checkout repository
