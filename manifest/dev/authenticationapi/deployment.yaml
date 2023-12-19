@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: authenticationapi-deployment
   namespace: group-5-dev
+  labels:
+    app: authenticationapi
 spec:
   selector:
     matchLabels:

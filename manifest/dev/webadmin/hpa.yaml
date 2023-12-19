@@ -2,6 +2,9 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: webadmin-hpa
+  namespace: group-5-dev
+  labels:
+    app: webadmin
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: webadmin-service
+  namespace: group-5-dev
   labels:
     app: webadmin
 spec:
