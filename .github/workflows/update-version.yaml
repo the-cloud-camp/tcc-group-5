@@ -1,108 +1,21 @@
-name: Update Version
+name: Update Auth Version
 
 on:
-  #push:
-    #tags:
-    #  - v*
-    #branches:
-    #  - workflow #develop
-  pull_request_target:
-    types: 
-      #- closed
-      - opened
-      - reopened
+  pull_request:
+    types: [closed]
     branches:
-      - develop
+      - 'develop'
   workflow_dispatch:
 
-env:
-  VERSION_FILE: test-package.json
-
-defaults:
-  run:
-    working-directory: ./application
-
 jobs:
-  check-version:
-    name: Check Version
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  version-frontend:
+    if: contains(github.head_ref, 'front')
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/version.yaml@develop
+    with:
+      APP_PATH: paybox-next
 
-      - name: Check Current Version
-        run: |
-          CURRENT_VERSION=$(yq '.version' $VERSION_FILE)
-          echo "CURRENT_VERSION=$CURRENT_VERSION"
-          echo "CURRENT_VERSION_2=$(yq '.version' $VERSION_FILE)"
-
-          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
-          echo "CURRENT_VERSION_2=$(yq '.version' $VERSION_FILE)" >> $GITHUB_ENV
-
-          echo "MAJOR=$(echo $CURRENT_VERSION | cut -d "." -f 1)" >> $GITHUB_ENV
-          echo "MINOR=$(echo $CURRENT_VERSION | cut -d "." -f 2)" >> $GITHUB_ENV
-          echo "BUILD=$(echo $CURRENT_VERSION | cut -d "." -f 3)" >> $GITHUB_ENV
-
-      - name: Show Current Version
-        run: |
-          echo "The current version: $MAJOR.$MINOR.$BUILD"
-
-  update-version:
-    name: Update Version
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Check Branch # TODO: change branch in git checkout
-        run: |
-          echo $CURRENT_VERSION
-          echo $CURRENT_VERSION_2
-          echo ${ github.base_ref }
-
-          CURRENT_BRANCH=$(git branch --show-current)
-          echo "Current branch is $CURRENT_BRANCH"
-
-          if [[ $CURRENT_BRANCH == "develop" ]]; then
-            echo "You are in the develop branch"
-          else
-            echo "Chaging branch to develop"
-            git checkout -f workflow
-          fi
-
-      - name: Update Version
-        run: |
-          echo "Current branch is $(git branch --show-current)"
-
-          if [[ ${ github.base_ref } == "release"* ]]; then
-            echo "Adding major version by 1"
-            (( MAJOR++ ))
-            echo "Updated MAJOR: $MAJOR"
-          elif [[ ${ github.base_ref } == "feat"* ]]; then
-            echo "Adding minor version by 1"
-            (( MINOR++ ))
-            echo "Updated MINOR: $MINOR"
-          else
-            echo "Adding build version by 1"
-            (( BUILD++ ))
-            echo "Updated BUILD: $BUILD"
-          fi
-
-          UPDATED_VERSION=$MAJOR.$MINOR.$BUILD
-          echo "The updated version: $UPDATED_VERSION"
-
-          echo "Update version to package.json"
-          ls
-          yq -i '.version=strenv(UPDATED_VERSION)' $VERSION_FILE
-
-  update-repo: # TODO: change file name in git add and branch in git push
-    name: Commit and Push
-    runs-on: ubuntu-latest
-    steps:    
-      - name: Commit and Push
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add test-package.json
-          git commit -m "bot: update package.json [skip ci]"
-          git push origin workflow
+  version-auth:
+    if: contains(github.head_ref, 'auth')
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/version.yaml@develop
+    with:
+      APP_PATH: paybox-auth-api
