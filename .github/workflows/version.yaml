@@ -8,14 +8,20 @@ on:
   workflow_dispatch:
 
 jobs:
-  version-frontend:
-    if: contains(github.head_ref, 'front')
-    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-version-template.yaml@develop
-    with:
-      APP_FOLDER: paybox-next
-
   version-auth:
     if: contains(github.head_ref, 'auth')
     uses: the-cloud-camp/tcc-group-5/.github/workflows/version.yaml@develop
     with:
       APP_FOLDER: paybox-auth-api
+
+  version-webadmin:
+    if: contains(github.head_ref, 'web')
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-version-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-next
+
+  version-statement:
+    if: contains(github.head_ref, 'state')
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/version.yaml@develop
+    with:
+      APP_FOLDER: paybox-statement-api
