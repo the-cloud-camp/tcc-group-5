@@ -1,0 +1,91 @@
+name: PR
+
+on:
+  workflow_call:
+    inputs:
+      APP_FOLDER:
+        required: true
+        description: 'Folder name of the service under application folder'
+        type: string
+      SERVICE_NAME:
+        required: true
+        description: 'Name of the service for container image. Format: <owner>/tcc-group-5-<SERVICE_NAME>:<tag>'
+        type: string
+      APP_MANIFEST_FOLDER:
+        required: true
+        description: 'Folder name of the service under manifest/<env> folder'
+        type: string
+
+env:
+  DEPLOYMENT_FILE: deployment.yaml
+
+jobs:
+  image-tag:
+    name: Image Tag
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./application
+    outputs:
+      NEW_TAG: ${{ steps.retag.outputs.NEW_TAG }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          #fetch-depth: 0
+          ref: develop
+
+      - name: Pull Image
+        run: |
+          export IMAGE_TAG=$(git log -2 --format=%H | tail -n 1)
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+          echo "Docker Login"
+          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+          docker pull ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:$IMAGE_TAG
+          echo "List Images"
+          docker images | ${{ inputs.SERVICE_NAME }}
+
+      - name: Retag Image
+        id: retag
+        run: |
+          docker images | ${{ inputs.SERVICE_NAME }}
+          cd ${{ inputs.APP_FOLDER }}
+          echo "Image tag: $IMAGE_TAG"
+          export NEW_TAG=$(jq -r '.version' package.json)
+          echo "New tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+
+          docker tag ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:$IMAGE_TAG ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:v$NEW_TAG
+          docker push ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:v$NEW_TAG
+
+  deployment-image:
+    name: Deployment Image
+    runs-on: ubuntu-latest
+    needs: image-tag
+    defaults:
+      run:
+        working-directory: ./manifest/prod
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Update Deployment
+        env:
+          NEW_TAG: ${{ needs.image-tag.outputs.NEW_TAG }}
+        run: |
+          cd ${{ inputs.APP_MANIFEST_FOLDER }}
+          export APP_IMAGE_URL=${{ vars.APP_IMAGE }}/tcc-group-5-${{ inputs.SERVICE_NAME }}:v$NEW_TAG
+          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE_URL)' $DEPLOYMENT_FILE
+          export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
+          echo "Updated image: $UPDATED_IMAGE"
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add $DEPLOYMENT_FILE
+          git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml [skip ci]"
+          git push origin main

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-sts
-  namespace: group-5-dev
+  namespace: group-5-prod
   labels:
     app: postgres
 spec:

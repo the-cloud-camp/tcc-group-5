@@ -1,0 +1,124 @@
+name: Authetication Service
+
+on:
+  workflow_call:
+    inputs:
+      APP_FOLDER:
+        required: true
+        description: 'Folder name of the service under application folder'
+        type: string
+      SERVICE_NAME:
+        required: true
+        description: 'Name of the service for container image. Format: <owner>/tcc-group-5-<SERVICE_NAME>:<tag>'
+        type: string
+      APP_MANIFEST_FOLDER:
+        required: true
+        description: 'Folder name of the service under manifest/<env> folder'
+        type: string
+
+env:
+  DEPLOYMENT_FILE: deployment.yaml
+
+jobs:
+  containerize:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./application
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.APP_IMAGE }}
+          tags: ${{ github.sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ inputs.APP_FOLDER }}
+          file: ./${{ inputs.APP_FOLDER }}/Dockerfile
+          push: true
+          #tags: ${{ steps.meta.outputs.tags }}
+          #tags: ${{vars.APP_IMAGE}}/auth:${{ steps.meta.outputs.tags }}
+          #tags: "${{vars.APP_IMAGE}}/auth:${GITHUB_SHA}"
+
+          tags: ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:${{ github.sha }}
+
+  k8s-deployment-dev:
+    name: Update Deployment
+    runs-on: ubuntu-latest
+    needs: containerize
+    defaults:
+      run:
+        working-directory: ./manifest/dev
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update Deployment
+        run: |
+          cd ${{ inputs.APP_MANIFEST_FOLDER }}
+          export APP_IMAGE_URL=${{ vars.APP_IMAGE }}/tcc-group-5-${{ inputs.SERVICE_NAME }}:${{ github.sha }}
+          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE_URL)' $DEPLOYMENT_FILE
+          export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
+          echo "Updated image: $UPDATED_IMAGE"
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add $DEPLOYMENT_FILE
+          git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml [skip ci]"
+          git push
+
+#  deploy-to-develop:
+#    needs: containerize
+#    runs-on: ubuntu-latest
+#    environment: develop
+
+#    defaults:
+#      run:
+#        working-directory: ./manifest/dev
+
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+
+#     - name: Set up Kube Config
+#        run: |
+#          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+#          mkdir -p $HOME/.kube
+#          mv kubeconfig $HOME/.kube/config
+
+#      - name: Set KUBE_CONTEXT
+#        run: |
+#          kubectl config use-context "${{ secrets.KUBE_CONTEXT }}"
+
+#      - name: Update Deployment to k8s
+#        run: |
+#          export APP_IMAGE_URL=${{ vars.APP_IMAGE }}:${{ github.sha }}
+#          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE_URL)' deployment.yaml
+#          kubectl apply -f deployment.yaml -n ${{ secrets.KUBE_NAMESPACE }}
+
+#      - name: Commit and push changes
+#        run: |
+#          git checkout develop
+#          git config --local user.email "actions@github.com"
+#          git config --local user.name "GitHub Actions"
+#          git add deployment.yaml
+#          git commit -m "bot: update deployment ${{ github.sha }}"
+#          git push
