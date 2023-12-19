@@ -1,18 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: authenticationapi-argo-deployment
+  name: authenticationapi-deployment
+  namespace: group-5-dev
+  labels:
+    app: authenticationapi
 spec:
   selector:
     matchLabels:
-      app: authenticationapi-argo
+      app: authenticationapi
   template:
     metadata:
       labels:
-        app: authenticationapi-argo
+        app: authenticationapi
     spec:
       containers:
-        - name: authenticationapi-argo-container
+        - name: authenticationapi-container
           image: zaserzafear/tcc-group-5-paybox-authenticationapi:latest
           imagePullPolicy: IfNotPresent
           resources:

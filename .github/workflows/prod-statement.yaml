@@ -1,4 +1,4 @@
-name: Update Prod Deployment Frontend
+name: Update Prod Deployment Statement
 
 on:
   pull_request:
@@ -6,13 +6,13 @@ on:
     branches:
       - 'main'
     paths:
-      - 'application/paybox-next/package.json'
+      - 'application/paybox-statement-api/package.json'
   workflow_dispatch:
 
 jobs:
   version-frontend:
     uses: the-cloud-camp/tcc-group-5/.github/workflows/prod-template.yaml@main
     with:
-      APP_FOLDER: paybox-next
-      SERVICE_NAME: frontend
-      APP_MANIFEST_FOLDER: frontend
+      APP_FOLDER: paybox-statement-api
+      SERVICE_NAME: statementapi
+      APP_MANIFEST_FOLDER: statementapi

@@ -1,11 +1,9 @@
-name: Update Frontend Deployment
+name: Update Web Admin Deployment
 
 on:
   push:
     paths:
       - 'application/paybox-next/**'
-    branches: # TBD: manifest for frontend?
-      - 'mainq'
   workflow_dispatch:
 
 jobs:
@@ -13,5 +11,5 @@ jobs:
     uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
     with:
       APP_FOLDER: paybox-next
-      SERVICE_NAME: frontend
-      APP_MANIFEST_FOLDER: frontend
+      SERVICE_NAME: webadmin
+      APP_MANIFEST_FOLDER: webadmin
