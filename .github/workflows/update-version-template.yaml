@@ -91,11 +91,11 @@ jobs:
         run: |
           echo "Current branch is $CURRENT_BRANCH"
 
-          if [[ ${{ github.base_ref }} == "release"* ]]; then
+          if [[ ${{ github.head_ref }} == "release"* ]]; then
             echo "Adding major version by 1"
             MAJOR=$(( MAJOR + 1 ))
             echo "Updated MAJOR: $MAJOR"
-          elif [[ ${{ github.base_ref }} == "feat"* ]]; then
+          elif [[ ${{ github.head_ref }} == "feat"* ]]; then
             echo "Adding minor version by 1"
             MINOR=$(( MINOR + 1 ))
             echo "Updated MINOR: $MINOR"
