@@ -5,15 +5,15 @@ on:
     inputs:
       APP_FOLDER:
         required: true
-        description: "Folder name of the service under application folder"
+        description: 'Folder name of the service under application folder'
         type: string
       SERVICE_NAME:
         required: true
-        description: "Name of the service for container image. Format: <owner>/tcc-group-5-<SERVICE_NAME>:<tag>"
+        description: 'Name of the service for container image. Format: <owner>/tcc-group-5-<SERVICE_NAME>:<tag>'
         type: string
       APP_MANIFEST_FOLDER:
         required: true
-        description: "Folder name of the service under manifest/<env> folder"
+        description: 'Folder name of the service under manifest/<env> folder'
         type: string
 
 env:
@@ -46,12 +46,11 @@ jobs:
           registry: ${{ secrets.DOCKER_REGISTRY }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./${{ inputs.APP_FOLDER }}
-          file: ./${{ inputs.APP_FOLDER }}/Dockerfile
+          context: ./application/${{ inputs.APP_FOLDER }}
+          file: ./application/${{ inputs.APP_FOLDER }}/Dockerfile
           push: true
           #tags: ${{ steps.meta.outputs.tags }}
           #tags: ${{vars.APP_IMAGE}}/auth:${{ steps.meta.outputs.tags }}
