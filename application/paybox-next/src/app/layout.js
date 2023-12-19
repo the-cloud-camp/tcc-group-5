@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { CustomProvider } from './provider'
+import StyledComponentsRegistry from '@/src/lib/AntdRegistry'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,7 +14,11 @@ export default function RootLayout({ children }) {
   return (
     <CustomProvider>
       <html lang="en">
-        <body>{children}</body>
+        <body className={inter.className}>
+          <StyledComponentsRegistry>
+            {children}
+          </StyledComponentsRegistry>
+        </body>
       </html>
     </CustomProvider>
   )

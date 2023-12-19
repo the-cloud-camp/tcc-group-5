@@ -1,6 +1,6 @@
 'use server'
 // import { cookies } from 'next/headers'
-import { apiInstance } from '@/utils/apiClient';
+import { signIn } from 'next-auth/react';
 
 export const login = async (values) => {
     try {
@@ -10,11 +10,15 @@ export const login = async (values) => {
             password: values.password
         }
         debugger
-        const result = await apiInstance().post('auth/login', body).then(res => res.data);
+        const result = await signIn('credentials', {
+            redirect: false,
+            ...body
+        })
+        // const result = await apiInstance().post('auth/login', body).then(res => res.data);
         console.log('Auth Success~~')
         return Promise.resolve({ ...result });
     } catch (err) {
-        console.log('err auth login', err)
+        console.log('err auth login 2: ', err)
         return Promise.reject(err);
     }
 }

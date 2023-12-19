@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { apiInstance } from '@/utils/apiClient'
+import { apiInstance } from '@/src/utils/apiClient'
 
 const login = async (values) => {
     try {
@@ -14,7 +14,7 @@ const login = async (values) => {
         console.log('Auth Success~~')
         return Promise.resolve({ ...result });
     } catch (err) {
-        console.log('err auth login', err)
+        console.log('err auth login: ', err)
         return Promise.reject(err);
     }
 }
