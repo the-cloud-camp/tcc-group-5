@@ -1,7 +1,7 @@
 'use client';
 import React from 'react'
 import { Button, Row, Col, Space, Layout, Form, Input, Checkbox, Typography, message } from 'antd';
-import { apiInstance } from '@/src/utils/apiClient';
+import { apiInstance } from '@/utils/apiClient';
 import { useRouter } from 'next/navigation';
 import { login } from './action';
 

@@ -1,7 +1,7 @@
 'use server'
 import { cookies } from 'next/headers'
 import { message } from 'antd'
-import { apiInstance } from '@/src/utils/apiClient';
+import { apiInstance } from '@/utils/apiClient';
 
 export async function login(values) {
     try {

@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { apiInstance } from '@/src/utils/apiClient'
+import { apiInstance } from '@/utils/apiClient'
 
 const login = async (values) => {
     try {
@@ -40,7 +40,7 @@ const handler = NextAuth({
         })
     ],
     pages: {
-        signIn: '/login',
+        // signIn: '/login',
         // signOut: '/auth/singout'
     },
     callbacks: {
