@@ -8,7 +8,8 @@ on:
 
 jobs:
   deployment-auth:
-    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
+    #uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@workflow
     with:
       APP_FOLDER: paybox-auth-api
       SERVICE_NAME: auth
