@@ -61,6 +61,8 @@ jobs:
   k8s-deployment-dev:
     name: Update Deployment
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs: containerize
     defaults:
       run:
