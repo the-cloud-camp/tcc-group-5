@@ -14,3 +14,7 @@ jobs:
       SERVICE_NAME: auth
       APP_MANIFEST_FOLDER: authenticationapi
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
