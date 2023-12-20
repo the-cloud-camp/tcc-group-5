@@ -32,7 +32,7 @@ const UserId = ({ params }) => {
         <Row>
             User id: {params.id}
             {/* {count} */}
-            <Button onClick={inc}>hi</Button>
+            {/* <Button onClick={inc}>hi</Button> */}
             {/* {userData} */}
         </Row>
     )

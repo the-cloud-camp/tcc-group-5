@@ -1,22 +1,27 @@
 'use client';
 import React from 'react'
-import { Button, Row, Col, Space, Layout, Form, Input, Checkbox, Typography, message } from 'antd';
-import { apiInstance } from '@/utils/apiClient';
+import { Button, Row, Col, Form, Input, Checkbox, Typography, message } from 'antd';
 import { useRouter } from 'next/navigation';
-import { login } from './action';
+import { signIn } from 'next-auth/react';
 
 const Page = () => {
     const router = useRouter();
     const { Text } = Typography
+
     const onFinish = async (values) => {
         try {
-            const result = await login(values)
+            // const result = await login(values)
+            const result = signIn("credentials", {
+                ...values,
+                redirect: true,
+                callbackUrl: '/foo'
+            })
             debugger
-            if (result?.status === 'Success') {
-                message.success('login success')
-                console.log('Success:', values);
-                router.push('/user/me')
-            }
+            // if (result?.status === 'Success') {
+            //     message.success('login success')
+            //     console.log('Success:', values);
+            //     router.push('/user/me')
+            // }
         } catch (err) {
             console.log('err', err)
             message.error('Err!!')
@@ -56,7 +61,7 @@ const Page = () => {
                 >
                     <Form.Item
                         label="Email"
-                        name="email"
+                        name="emailOrMobile"
                         rules={[
                             {
                                 required: true,

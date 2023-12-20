@@ -22,6 +22,7 @@ const login = async (values) => {
 const handler = NextAuth({
     providers: [
         CredentialsProvider({
+            id: 'credentials',
             name: "Paybox",
             credentials: {
                 emailOrMobile: { label: "email", type: "text", placeholder: "email" },
@@ -40,12 +41,12 @@ const handler = NextAuth({
         })
     ],
     pages: {
-        // signIn: '/login',
+        signIn: '/login',
         // signOut: '/auth/singout'
     },
     callbacks: {
         async jwt({ user, profile, session, account, token, trigger }) {
-            console.log('jwt call 2', { user, profile, session, account, token, trigger });
+            // console.log('jwt call 2', { user, profile, session, account, token, trigger });
             if (user) {
                 token.user = user
             }
@@ -55,7 +56,7 @@ const handler = NextAuth({
             return true
         },
         async session({ session, user, token, trigger, newSession }) {
-            console.log('session callback: ', { session, user, token, trigger, newSession })
+            // console.log('session callback: ', { session, user, token, trigger, newSession })
             if (token.id) {
                 session.user = { ...session.user, ...token.user }
             }
@@ -63,6 +64,14 @@ const handler = NextAuth({
                 ...session,
                 hi: 'hello world!!'
             }
+        },
+        async redirect({ baseUrl, url }) {
+            console.log('redirect: ', { baseUrl, url })
+            // Allows relative callback URLs
+            // if (url.startsWith("/")) return `${baseUrl}${url}`
+            // // Allows callback URLs on the same origin
+            // else if (new URL(url).origin === baseUrl) return url
+            return baseUrl
         }
     },
     session: {
