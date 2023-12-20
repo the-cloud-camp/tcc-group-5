@@ -30,6 +30,10 @@ jobs:
     outputs:
       image_tag: ${{ steps.meta.outputs.tags }}
       meta_tag: ${{ steps.meta-tag.outputs.META_TAG }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     defaults:
       run:
         working-directory: ./application
@@ -78,9 +82,9 @@ jobs:
     needs: containerize
     name: Update Deployment
     runs-on: ubuntu-latest
-    #permissions:
-    #  contents: 'read'
-    #  #id-token: 'write'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     
     defaults:
       run:
@@ -98,10 +102,13 @@ jobs:
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
           echo "${{ needs.containerize.outputs.image_tag }}"
-          echo "meta-image = $META_TAG"
           export APP_IMAGE=${{ needs.containerize.outputs.image_tag }}
-          export APP_IMAGE=$META_TAG
           yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
+
+          echo "meta-image = $META_TAG"
+          export APP_IMAGE_META=$META_TAG
+          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE_META)' $DEPLOYMENT_FILE
+
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
           echo "Updated image: $UPDATED_IMAGE"
 
