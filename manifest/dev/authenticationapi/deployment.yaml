@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: authenticationapi-container
-          image: zaserzafear/tcc-group-5-paybox-authenticationapi:latest
+          image: ""
           imagePullPolicy: IfNotPresent
           resources:
             limits:
