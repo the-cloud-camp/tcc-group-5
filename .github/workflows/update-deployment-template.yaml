@@ -102,6 +102,10 @@ jobs:
           export APP_IMAGE=${{ needs.containerize.outputs.image_tag }}
           yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
 
+          echo "${{ inputs.METADATA }}"
+          export APP_IMAGE=${{ inputs.METADATA }}
+          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
+
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
           echo "Updated image: $UPDATED_IMAGE"
 
