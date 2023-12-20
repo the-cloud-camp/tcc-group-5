@@ -44,7 +44,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           #images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          images: jirasinm/tcc-group-5-auth
+          images: jirasinm/tcc-group-5-${{ inputs.SERVICE_NAME }}
           tags: |
             type=sha,prefix=dev-
 
@@ -87,6 +87,7 @@ jobs:
       - name: Update Deployment
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
+          echo "${{ needs.containerize.outputs.image_tag }}"
           export APP_IMAGE=${{ needs.containerize.outputs.image_tag }}
           yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
