@@ -7,12 +7,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  metadata:
+    name: Metadata
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.metadata.outputs.tags }}
+    steps:
+      - name: Docker meta
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          #images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: jirasinm/tcc-group-5-auth
+          tags: |
+            type=sha,prefix=dev-
+
   deployment-auth:
+    needs: metadata
     uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
     with:
       APP_FOLDER: paybox-auth-api
       SERVICE_NAME: auth
       APP_MANIFEST_FOLDER: authenticationapi
+      METADATA: ${{ needs.metadata.outputs.image_tag == 'true' }}
     secrets: inherit
     permissions:
       contents: read

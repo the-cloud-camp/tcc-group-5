@@ -15,6 +15,9 @@ on:
         required: true
         description: 'Folder name of the service under manifest/<env> folder'
         type: string
+      METADATA:
+        required: true
+        type: string
 
 env:
   DEPLOYMENT_FILE: deployment.yaml
@@ -29,7 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image_tag: ${{ steps.meta.outputs.tags }}
-      meta_tag: ${{ steps.meta-tag.outputs.META_TAG }}
     defaults:
       run:
         working-directory: ./application
@@ -49,11 +51,11 @@ jobs:
           tags: |
             type=sha,prefix=dev-
 
-      - name: Get tag
-        id: meta-tag
-        run: |
-          echo "$DOCKER_METADATA_OUTPUT_TAGS"
-          echo "META_TAG=$DOCKER_METADATA_OUTPUT_TAGS" >> $GITHUB_OUTPUT
+      #- name: Get tag
+      #  id: meta-tag
+      #  run: |
+      #    echo "$DOCKER_METADATA_OUTPUT_TAGS"
+      #    echo "META_TAG=$DOCKER_METADATA_OUTPUT_TAGS" >> $GITHUB_OUTPUT
           
 
       - name: Login to Docker Hub
@@ -89,7 +91,9 @@ jobs:
           token: ${{ secrets.GH_PAT }}
 
       - name: check tag
-        run: echo "${{ needs.containerize.outputs.image_tag }}"
+        run: |
+          echo "${{ needs.containerize.outputs.image_tag }}"
+          echo "${{ inputs.METADATA }}"
       
       - name: Update Deployment
         run: |
