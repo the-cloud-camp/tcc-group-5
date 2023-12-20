@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image_tag: ${{ steps.meta.outputs.tags }}
+      meta_tag: ${{ steps.meta-tag.outputs.META_TAG }}
     defaults:
       run:
         working-directory: ./application
@@ -47,6 +48,13 @@ jobs:
           images: jirasinm/tcc-group-5-${{ inputs.SERVICE_NAME }}
           tags: |
             type=sha,prefix=dev-
+
+      - name: Get tag
+        id: meta-tag
+        run: |
+          echo "$DOCKER_METADATA_OUTPUT_TAGS"
+          echo "META_TAG=$DOCKER_METADATA_OUTPUT_TAGS" >> $GITHUB_OUTPUT
+          
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -85,10 +93,14 @@ jobs:
           token: ${{ secrets.GH_PAT }}
 
       - name: Update Deployment
+        env:
+          META_TAG: ${{ needs.containerize.outputs.meta_tag }}
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
           echo "${{ needs.containerize.outputs.image_tag }}"
+          echo "meta-image = $META_TAG"
           export APP_IMAGE=${{ needs.containerize.outputs.image_tag }}
+          export APP_IMAGE=$META_TAG
           yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
           echo "Updated image: $UPDATED_IMAGE"
