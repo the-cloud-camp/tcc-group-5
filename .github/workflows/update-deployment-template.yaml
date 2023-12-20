@@ -88,6 +88,9 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
 
+      - name: check tag
+        run: echo "${{ needs.containerize.outputs.image_tag }}"
+      
       - name: Update Deployment
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
