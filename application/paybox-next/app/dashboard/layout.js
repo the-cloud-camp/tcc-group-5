@@ -1,7 +1,9 @@
 'use client'
 import React from 'react';
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu, theme, Row } from 'antd';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 const { Header, Content, Footer, Sider } = Layout;
 const items = [UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
     (icon, index) => ({
@@ -14,6 +16,19 @@ const layout = ({ children }) => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+
+    const _items = [
+        {
+            label: <Link href={'/dashboard/user/me'}>profile</Link>
+        },
+        {
+            label: <Link href={'/dashboard/statement'}>statement</Link>
+        },
+        {
+            label: <Row onClick={() => {signOut({ callbackUrl: 'http://localhost:3000/dashboard/user/me' })}}>Sign out</Row>
+        }
+    ]
+
     return (
         <Layout style={{ height: "100vh" }}>
             <Sider
@@ -27,7 +42,11 @@ const layout = ({ children }) => {
                 }}
             >
                 <div className="demo-logo-vertical" style={{ color: 'white' }}>sdfidsf</div> sdfdsfdsf
-                <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']} items={items} />
+                <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}
+                    items={_items}
+                    onClick={(value) => {
+                        console.log('value: ', value)
+                    }} />
             </Sider>
             <Layout>
                 <Header
