@@ -13,6 +13,9 @@ jobs:
     outputs:
       image_tag: ${{ steps.metadata.outputs.tags }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Docker meta
         id: metadata
         uses: docker/metadata-action@v5
@@ -29,7 +32,7 @@ jobs:
       APP_FOLDER: paybox-auth-api
       SERVICE_NAME: auth
       APP_MANIFEST_FOLDER: authenticationapi
-      METADATA: ${{ needs.metadata.outputs.image_tag == 'true' }}
+      METADATA: ${{ needs.metadata.outputs.image_tag }}
     secrets: inherit
     permissions:
       contents: read
