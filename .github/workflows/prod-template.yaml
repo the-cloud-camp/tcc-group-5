@@ -63,7 +63,8 @@ jobs:
     name: Deployment Image
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: 'read'
+      id-token: 'write'
     needs: image-tag
     defaults:
       run:

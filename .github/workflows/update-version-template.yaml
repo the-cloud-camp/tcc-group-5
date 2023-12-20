@@ -55,7 +55,8 @@ jobs:
     name: Update Version
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: 'read'
+      id-token: 'write'
     needs: check-version
     steps:
       - name: Checkout repository

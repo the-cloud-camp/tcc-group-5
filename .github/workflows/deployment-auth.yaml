@@ -13,4 +13,4 @@ jobs:
       APP_FOLDER: paybox-auth-api
       SERVICE_NAME: auth
       APP_MANIFEST_FOLDER: authenticationapi
-    secrets: inherit
+    #secrets: inherit
