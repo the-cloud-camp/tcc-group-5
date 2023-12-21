@@ -15,9 +15,9 @@ on:
         required: true
         description: 'Folder name of the service under manifest/<env> folder'
         type: string
-      METADATA:
-        required: true
-        type: string
+      #METADATA:
+      #  required: true
+      #  type: string
 
 env:
   DEPLOYMENT_FILE: deployment.yaml
@@ -93,17 +93,13 @@ jobs:
       - name: Check Tag
         run: |
           echo "${{ needs.containerize.outputs.image_tag }}"
-          echo "${{ inputs.METADATA }}"
+        #echo "${{ inputs.METADATA }}"
       
       - name: Update Deployment
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
           echo "${{ needs.containerize.outputs.image_tag }}"
           export APP_IMAGE=${{ needs.containerize.outputs.image_tag }}
-          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
-
-          echo "${{ inputs.METADATA }}"
-          export APP_IMAGE=${{ inputs.METADATA }}
           yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
 
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
@@ -114,6 +110,7 @@ jobs:
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
           git config --global user.email "support@dependabot.com"
           git config --global user.name "dependabot[bot]"
+          git branch
           git add $DEPLOYMENT_FILE
           git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
           git push
