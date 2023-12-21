@@ -79,12 +79,12 @@ jobs:
     needs: image-tag
     defaults:
       run:
-        working-directory: ./manifest/prod
+        working-directory: ./manifest/dev # TODO: change to prod
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: develop # TODO: change to main
           token: ${{ secrets.GH_PAT }}
 
       - name: Update Deployment
@@ -106,4 +106,5 @@ jobs:
           git config --global user.name "dependabot[bot]"
           git add $DEPLOYMENT_FILE
           git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
-          git push origin main
+          git push origin develop
+      #git push origin main
