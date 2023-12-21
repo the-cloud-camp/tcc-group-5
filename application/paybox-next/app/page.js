@@ -19,7 +19,7 @@ export default function Home({ children }) {
       </>
         : <>
           not login
-          <Button onClick={() => signIn()}>Sign In</Button>
+          <Button onClick={() => signIn('credentials', { callbackUrl: "/dashboard/statement", redirect: true })}>Sign In</Button>
           <button onClick={() => signIn()}>Sign in</button>
           <Link href={'/auth/signin'}>register</Link>
         </>

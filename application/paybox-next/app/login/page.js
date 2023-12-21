@@ -11,10 +11,10 @@ const Page = () => {
     const onFinish = async (values) => {
         try {
             // const result = await login(values)
-            const result = signIn("credentials", {
+            const result = await signIn("credentials", {
                 ...values,
                 redirect: true,
-                callbackUrl: '/foo'
+                callbackUrl: '/dashboard/user/list'
             })
             debugger
             // if (result?.status === 'Success') {

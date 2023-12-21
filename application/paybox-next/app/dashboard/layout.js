@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Button, Layout, Menu, theme, Row } from 'antd';
+import { Button, Layout, Menu, theme, Row, Col, Typography } from 'antd';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 const { Header, Content, Footer, Sider } = Layout;
@@ -25,7 +25,7 @@ const layout = ({ children }) => {
             label: <Link href={'/dashboard/statement'}>statement</Link>
         },
         {
-            label: <Row onClick={() => {signOut({ callbackUrl: 'http://localhost:3000/dashboard/user/me' })}}>Sign out</Row>
+            label: <Row onClick={() => { signOut({ callbackUrl: "/login", redirect: true }) }}>Sign out</Row>
         }
     ]
 
@@ -41,7 +41,13 @@ const layout = ({ children }) => {
                     console.log(collapsed, type);
                 }}
             >
-                <div className="demo-logo-vertical" style={{ color: 'white' }}>sdfidsf</div> sdfdsfdsf
+                <Row justify={'center'}>
+                    <Col>
+                        <Typography.Title style={{color: 'white'}}>
+                            PAYBox
+                        </Typography.Title>
+                    </Col>
+                </Row>
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}
                     items={_items}
                     onClick={(value) => {

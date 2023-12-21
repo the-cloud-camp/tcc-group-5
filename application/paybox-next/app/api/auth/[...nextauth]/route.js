@@ -11,7 +11,7 @@ const login = async (values) => {
         }
         debugger
         const result = await apiInstance().post('auth/login', body).then(res => res.data);
-        console.log('Auth Success~~')
+        console.log('Auth Success~~');
         return Promise.resolve({ ...result });
     } catch (err) {
         console.log('err auth login: ', err)
@@ -53,8 +53,8 @@ const handler = NextAuth({
             return token
         },
         async session({ session, user, token, trigger, newSession }) {
-            // console.log('session callback: ', { session, user, token, trigger, newSession })
-            if (token.id) {
+            // console.log('session callback: ', {  token })
+            if (token.user) {
                 session.user = { ...session.user, ...token.user }
             }
             return {
@@ -62,12 +62,12 @@ const handler = NextAuth({
             }
         },
         async redirect({ baseUrl, url }) {
-            console.log('redirect: ', { baseUrl, url })
+            // console.log('redirect: ', { baseUrl, url })
             // Allows relative callback URLs
             // if (url.startsWith("/")) return `${baseUrl}${url}`
             // // Allows callback URLs on the same origin
             // else if (new URL(url).origin === baseUrl) return url
-            return baseUrl
+            return url
         }
     },
     session: {
