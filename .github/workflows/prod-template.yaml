@@ -104,6 +104,8 @@ jobs:
           echo "Updated Image: $UPDATED_IMAGE"
 
       - name: Commit and Push
+        env:
+          NEW_TAG: ${{ needs.image-tag.outputs.NEW_TAG }}
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
           git config --global user.email "support@dependabot.com"
@@ -111,4 +113,5 @@ jobs:
           git add $DEPLOYMENT_FILE
           git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
           git push origin develop
-      #git push origin main
+          git tag -a $NEW_TAG -m "Tagging version $NEW_TAG"
+          git push origin $NEW_TAG
