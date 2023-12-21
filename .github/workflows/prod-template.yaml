@@ -96,12 +96,12 @@ jobs:
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
           echo "New Tag: ${{ needs.image-tag.outputs.NEW_TAG }}"
-          export APP_IMAGE="${{ needs.image-tag.outputs.IMAGE_NAME }}:v${{ needs.image-tag.outputs.NEW_TAG }}"
+          export APP_IMAGE="${{ needs.image-tag.outputs.IMAGE_NAME }}:${{ needs.image-tag.outputs.NEW_TAG }}"
           echo "New Image with Tag: $APP_IMAGE"
           yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
 
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
-          echo "Updated image: $UPDATED_IMAGE"
+          echo "Updated Image: $UPDATED_IMAGE"
 
       - name: Commit and Push
         run: |
