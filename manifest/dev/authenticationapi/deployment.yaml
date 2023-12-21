@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: authenticationapi-container
-          image: "jirasinm/tcc-group-5-auth:dev-b9fcbde"
+          image: "1.1.0"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
