@@ -2,7 +2,7 @@ name: Update Version
 
 on:
   pull_request:
-    types: [closed]
+    types: [closed, opened, reopened]
     branches:
       - 'develop'
   workflow_dispatch:

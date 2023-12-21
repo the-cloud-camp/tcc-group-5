@@ -21,7 +21,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           #images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          images: jirasinm/tcc-group-5-auth
+          images: ${{ vars.APP_IMAGE }}/tcc-group-5-auth
           tags: |
             type=sha,prefix=dev-
 
@@ -34,7 +34,7 @@ jobs:
       APP_MANIFEST_FOLDER: authenticationapi
       METADATA: ${{ needs.metadata.outputs.image_tag }}
     secrets: inherit
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
+    #permissions:
+    #  contents: read
+    #  packages: write
+    #  id-token: write

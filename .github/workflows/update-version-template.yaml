@@ -54,15 +54,16 @@ jobs:
   update-version:
     name: Update Version
     runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
+    #permissions:
+    #  contents: 'read'
+    #  id-token: 'write'
     needs: check-version
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: develop
+          token: ${{ secrets.GH_PAT }}
 
       - name: Check Branch
         id: current-branch
@@ -120,8 +121,8 @@ jobs:
       - name: Commit and Tag
         run: |
           echo "Current branch is $CURRENT_BRANCH"
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --global user.email "support@dependabot.com"
+          git config --global user.name "dependabot[bot]"
           git add ./${{ inputs.APP_FOLDER }}/$VERSION_FILE
           git commit -m "bot: update package.json [skip ci]"
           git push origin develop

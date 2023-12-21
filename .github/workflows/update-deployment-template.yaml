@@ -47,7 +47,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           #images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          images: jirasinm/tcc-group-5-${{ inputs.SERVICE_NAME }}
+          images: ${{ vars.APP_IMAGE }}/tcc-group-5-${{ inputs.SERVICE_NAME }}
           tags: |
             type=sha,prefix=dev-
 
@@ -65,7 +65,7 @@ jobs:
           #username: ${{ github.actor }}
           #password: ${{ secrets.GITHUB_TOKEN }}
 
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ vars.APP_IMAGE }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push
@@ -90,7 +90,7 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
 
-      - name: check tag
+      - name: Check Tag
         run: |
           echo "${{ needs.containerize.outputs.image_tag }}"
           echo "${{ inputs.METADATA }}"

@@ -2,7 +2,7 @@ name: Update Prod Deployment Auth
 
 on:
   pull_request:
-    types: [closed]
+    types: [closed, opened, reopened]
     branches:
       - 'main'
     paths:
