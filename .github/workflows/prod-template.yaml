@@ -27,6 +27,7 @@ jobs:
       run:
         working-directory: ./application/${{ inputs.APP_FOLDER }}
     outputs:
+      IMAGE_NAME: ${{ steps.image.outputs.IMAGE_NAME }}
       NEW_TAG: ${{ steps.retag.outputs.NEW_TAG }}
     steps:
       - name: Checkout repository
@@ -46,6 +47,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Pull Image
+        id: image
         shell: bash
         working-directory: ./manifest/dev
         run: |
@@ -55,6 +57,7 @@ jobs:
 
           export IMAGE_NAME=${{ vars.APP_IMAGE }}/tcc-group-5-${{ inputs.SERVICE_NAME }}
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
           echo "image_name: $IMAGE_NAME"
 
           docker pull $IMAGE_NAME:$IMAGE_TAG
@@ -92,8 +95,9 @@ jobs:
           NEW_TAG: ${{ needs.image-tag.outputs.NEW_TAG }}
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
-          echo "${{ needs.image-tag.outputs.NEW_TAG }}"
-          export APP_IMAGE=${{ needs.image-tag.outputs.NEW_TAG }}
+          echo "NEW_TAG: ${{ needs.image-tag.outputs.NEW_TAG }}"
+          export APP_IMAGE="$IMAGE_NAME:v${{ needs.image-tag.outputs.NEW_TAG }}"
+          echo "APP_IMAGE: $APP_IMAGE"
           yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
 
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
