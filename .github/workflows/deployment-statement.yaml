@@ -7,29 +7,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  metadata:
-    name: Metadata
-    runs-on: ubuntu-latest
-    outputs:
-      image_tag: ${{ steps.metadata.outputs.tags }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Docker meta
-        id: metadata
-        uses: docker/metadata-action@v5
-        with:
-          #images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          images: ${{ vars.APP_IMAGE }}/tcc-group-5-statement
-          tags: |
-            type=sha,prefix=dev-
-
   deployment-auth:
     uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
     with:
       APP_FOLDER: paybox-statement-api
       SERVICE_NAME: statementapi
       APP_MANIFEST_FOLDER: statementapi
-      METADATA: ${{ needs.metadata.outputs.image_tag }}
     secrets: inherit

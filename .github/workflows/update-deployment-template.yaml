@@ -15,9 +15,6 @@ on:
         required: true
         description: 'Folder name of the service under manifest/<env> folder'
         type: string
-      #METADATA:
-      #  required: true
-      #  type: string
 
 env:
   DEPLOYMENT_FILE: deployment.yaml
@@ -93,7 +90,6 @@ jobs:
       - name: Check Tag
         run: |
           echo "${{ needs.containerize.outputs.image_tag }}"
-        #echo "${{ inputs.METADATA }}"
       
       - name: Update Deployment
         run: |
