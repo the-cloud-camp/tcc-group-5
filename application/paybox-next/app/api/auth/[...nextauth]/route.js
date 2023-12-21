@@ -52,17 +52,13 @@ const handler = NextAuth({
             }
             return token
         },
-        async signIn({ user, account, email, credentials, profile }) {
-            return true
-        },
         async session({ session, user, token, trigger, newSession }) {
             // console.log('session callback: ', { session, user, token, trigger, newSession })
             if (token.id) {
                 session.user = { ...session.user, ...token.user }
             }
             return {
-                ...session,
-                hi: 'hello world!!'
+                ...session
             }
         },
         async redirect({ baseUrl, url }) {
