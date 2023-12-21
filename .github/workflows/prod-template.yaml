@@ -1,4 +1,4 @@
-name: PR
+name: Release Prod
 
 on:
   workflow_call:
@@ -14,9 +14,6 @@ on:
       APP_MANIFEST_FOLDER:
         required: true
         description: 'Folder name of the service under manifest/<env> folder'
-        type: string
-      METADATA:
-        required: true
         type: string
 
 env:
@@ -50,9 +47,9 @@ jobs:
 
       - name: Pull Image
         shell: bash
-        working-directory: ./manifest/dev
+        working-directory: ./manifest/dev/${{ inputs.APP_MANIFEST_FOLDER }}
         run: |
-          export IMAGE_TAG=$(yq e '.spec.template.spec.containers[0].image' ${{ inputs.APP_MANIFEST_FOLDER }}/deployment.yaml | cut -d ':' -f 2)
+          export IMAGE_TAG=$(yq e '.spec.template.spec.containers[0].image' ${{ inputs.APP_MANIFEST_FOLDER }}/$DEPLOYMENT_FILE | cut -d ':' -f 2)
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "image_tag: $IMAGE_TAG"
 
@@ -79,9 +76,6 @@ jobs:
   deployment-image:
     name: Deployment Image
     runs-on: ubuntu-latest
-    #permissions:
-    #  contents: 'read'
-    #  id-token: 'write'
     needs: image-tag
     defaults:
       run:
