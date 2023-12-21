@@ -15,7 +15,7 @@ spec:
       labels:
         app: pgadmin
     spec:
-      nodeName: node53272-tcc-01.th1.proen.cloud
+      nodeName: node55874-tcc-01.th1.proen.cloud
       initContainers:
         - name: volume-mount-hack
           image: busybox
