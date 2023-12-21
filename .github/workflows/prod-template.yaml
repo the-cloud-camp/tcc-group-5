@@ -47,7 +47,7 @@ jobs:
 
       - name: Pull Image
         shell: bash
-        working-directory: ./manifest/dev/${{ inputs.APP_MANIFEST_FOLDER }}
+        working-directory: ./manifest/dev
         run: |
           export IMAGE_TAG=$(yq e '.spec.template.spec.containers[0].image' ${{ inputs.APP_MANIFEST_FOLDER }}/$DEPLOYMENT_FILE | cut -d ':' -f 2)
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
@@ -59,12 +59,12 @@ jobs:
 
           docker pull $IMAGE_NAME:$IMAGE_TAG
           echo "List Images"
-          docker images | ${{ inputs.SERVICE_NAME }}
+          docker images | grep ${{ inputs.SERVICE_NAME }}
 
       - name: Retag Image
         id: retag
         run: |
-          docker images | ${{ inputs.SERVICE_NAME }}
+          docker images | grep ${{ inputs.SERVICE_NAME }}
           echo "Image tag: $IMAGE_TAG"
           export NEW_TAG=$(jq -r '.version' package.json)
           echo "New tag: $NEW_TAG"
