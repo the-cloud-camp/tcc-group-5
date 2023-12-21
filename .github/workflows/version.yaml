@@ -10,7 +10,7 @@ on:
 jobs:
   version-auth:
     if: contains(github.head_ref, 'auth')
-    uses: the-cloud-camp/tcc-group-5/.github/workflows/version.yaml@develop
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-version-template.yaml@develop
     with:
       APP_FOLDER: paybox-auth-api
 
@@ -22,6 +22,6 @@ jobs:
 
   version-statement:
     if: contains(github.head_ref, 'state')
-    uses: the-cloud-camp/tcc-group-5/.github/workflows/version.yaml@develop
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-version-template.yaml@develop
     with:
       APP_FOLDER: paybox-statement-api
