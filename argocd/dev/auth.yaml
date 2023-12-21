@@ -11,6 +11,7 @@ spec:
     path: manifest/dev/authenticationapi
     #directory:
     #  recurse: true
+    # test
   destination:
     name: in-cluster
     namespace: group-5-dev
