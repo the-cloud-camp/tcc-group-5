@@ -32,5 +32,7 @@ spec:
               value: /group-5-dev/webadmin
             - name: API_URL
               value: http://authenticationapi-service
+            - name: STATEMENT_URL
+              value: http://statementapi-service/api
             - name: NEXTAUTH_SECRET
               value: +bTDE5JaAmoJL+uu/C7h8RjiGA/+4iTrObR9N+W6juY=
