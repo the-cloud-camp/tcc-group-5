@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { apiInstance } from '@/utils/apiClient'
+import { cookies } from "next/headers"
 
 const login = async (values) => {
     try {
@@ -12,6 +13,7 @@ const login = async (values) => {
         debugger
         const result = await apiInstance().post('auth/login', body).then(res => res.data);
         console.log('Auth Success~~');
+        cookies().set('token', result.accessToken)
         return Promise.resolve({ ...result });
     } catch (err) {
         console.log('err auth login: ', err)
@@ -33,7 +35,6 @@ const handler = NextAuth({
                 // const user = { id: "1", name: "J Smith", email: "jsmith@example.com", kio: 'ioio' }
                 const result = await login(credentials);
                 if (result) {
-                    console.log('result', result)
                     return result.user
                 }
                 return null

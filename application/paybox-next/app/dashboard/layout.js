@@ -73,8 +73,10 @@ const layout = ({ children }) => {
                 >
                     <div
                         style={{
+                            overflow: 'auto',
+                            height: "100%",
                             padding: 24,
-                            minHeight: 360,
+                            // minHeight: 360,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
                         }}

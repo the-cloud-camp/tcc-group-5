@@ -3,11 +3,24 @@ import { statementInstance } from '@/utils/apiClient'
 
 export const getStatementDetail = async (stateId) => {
     try {
-        console.log('stateId', stateId)
+        if (!stateId) {
+            throw 'i want state id!!'
+        }
         const result = await statementInstance().get(`/statement/${stateId}`).then(res => res.data);
-        console.log('result', result)
         return result
     } catch (err) {
-        return err
+        throw err
+    }
+}
+
+export const updateStatus = async (stateId) => {
+    try {
+        if (!stateId) {
+            throw 'i want state id!!'
+        }
+        const result = await statementInstance().patch(`/statement/${stateId}`).then(res => res.data);
+        return result
+    } catch (err) {
+        throw err
     }
 }
