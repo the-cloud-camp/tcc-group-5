@@ -35,8 +35,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: develop
+        #with:
+        #  ref: develop
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -87,7 +87,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: develop
+          #ref: develop
           token: ${{ secrets.GH_PAT }}
 
       - name: Check Tag
@@ -112,7 +112,7 @@ jobs:
           git branch
           git add $DEPLOYMENT_FILE
           git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
-          git push origin develop
+          git push
 
 #  deploy-to-develop:
 #    needs: containerize
