@@ -1,4 +1,4 @@
-name: Authetication Service
+name: Update Deployment Template
 
 on:
   workflow_call:
@@ -35,6 +35,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: develop
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -85,6 +87,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: develop
           token: ${{ secrets.GH_PAT }}
 
       - name: Check Tag
@@ -109,7 +112,7 @@ jobs:
           git branch
           git add $DEPLOYMENT_FILE
           git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
-          git push
+          git push origin develop
 
 #  deploy-to-develop:
 #    needs: containerize
