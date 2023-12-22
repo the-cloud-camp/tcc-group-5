@@ -19,10 +19,10 @@ const layout = ({ children }) => {
 
     const _items = [
         {
-            label: <Link href={'/dashboard/user/me'}>profile</Link>
+            label: <Link href={'/dashboard/user/me'}>Profile</Link>
         },
         {
-            label: <Link href={'/dashboard/statement'}>statement</Link>
+            label: <Link href={'/dashboard/statement'}>Statement</Link>
         },
         {
             label: <Row onClick={() => { signOut({ callbackUrl: "/login", redirect: true }) }}>Sign out</Row>

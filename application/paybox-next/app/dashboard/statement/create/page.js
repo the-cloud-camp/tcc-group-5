@@ -18,7 +18,8 @@ const CreateStatementpage = () => {
             }
             const submit = await createStatement(body)
             message.success("Create Success!!")
-            router.back()
+            debugger
+            router.push('/dashboard/statement')
             return submit
         } catch (err) {
             return err
@@ -84,7 +85,7 @@ const CreateStatementpage = () => {
                             <Button type='default' onClick={() => router.back()}>Back</Button>
                         </Col>
                         <Col span={12}>
-                            <Button type='primary' htmlType="submit">Subnmit</Button>
+                            <Button type='primary' htmlType="submit">Submit</Button>
                         </Col>
                     </Row>
                 </Form>
