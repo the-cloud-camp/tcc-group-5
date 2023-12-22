@@ -82,7 +82,7 @@ jobs:
     needs: image-tag
     defaults:
       run:
-        working-directory: ./manifest/dev # TODO: change to prod
+        working-directory: ./manifest/prod
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
