@@ -9,6 +9,7 @@ import Link from 'next/link'
 
 const StatementPage = () => {
     const [statementList, setStatementList] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
     const { Text } = Typography
     const router = useRouter()
     const columns = [
@@ -54,12 +55,15 @@ const StatementPage = () => {
     const { data: session, status } = useSession();
     const getListStatement = async () => {
         try {
+            setIsLoading(true)
             // const result = await statementInstance().get(`/statement/history/${session.user.id}`);
             const result = await getStatementList();
             console.log('result aaa', result)
             setStatementList(result)
+            setIsLoading(false)
             return
         } catch (err) {
+            setIsLoading(false)
             console.log('err', err)
             return
         }
@@ -79,12 +83,13 @@ const StatementPage = () => {
                     <Button type='primary'
                         onClick={() => {
                             console.log('hi')
-                            return router.push('/dashboard/statement/create')}}
+                            return router.push('/dashboard/statement/create')
+                        }}
                     >
                         create
                     </Button>
                 </Row>
-                <Table dataSource={statementList} columns={columns} />
+                <Table loading={isLoading} dataSource={statementList} columns={columns} />
             </Col>
         </Row>
     )

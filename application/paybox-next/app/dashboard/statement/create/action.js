@@ -8,6 +8,7 @@ export const createStatement = async (values) => {
         console.log('result', result)
         return result
     } catch (err) {
-        return err
+        console.log('err', err)
+        throw err
     }
 }

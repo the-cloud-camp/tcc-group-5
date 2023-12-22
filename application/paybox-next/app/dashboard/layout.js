@@ -5,6 +5,7 @@ import { Button, Layout, Menu, theme, Row, Col, Typography } from 'antd';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 const { Header, Content, Footer, Sider } = Layout;
+const { Text } = Typography
 const items = [UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
     (icon, index) => ({
         key: String(index + 1),
@@ -25,7 +26,11 @@ const layout = ({ children }) => {
             label: <Link href={'/dashboard/statement'}>Statement</Link>
         },
         {
-            label: <Row onClick={() => { signOut({ callbackUrl: "/login", redirect: true }) }}>Sign out</Row>
+            label: <Row onClick={() => { signOut({ callbackUrl: "/login", redirect: true }) }}>
+                <Text style={{ color: 'red' }}>
+                    Sign out
+                </Text>
+            </Row>
         }
     ]
 
@@ -43,7 +48,7 @@ const layout = ({ children }) => {
             >
                 <Row justify={'center'}>
                     <Col>
-                        <Typography.Title style={{color: 'white'}}>
+                        <Typography.Title style={{ color: 'white' }}>
                             PAYBox
                         </Typography.Title>
                     </Col>
