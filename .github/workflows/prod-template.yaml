@@ -1,4 +1,4 @@
-name: PR
+name: Release Prod
 
 on:
   workflow_call:
@@ -25,45 +25,60 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./application
+        working-directory: ./application/${{ inputs.APP_FOLDER }}
     outputs:
+      IMAGE_NAME: ${{ steps.image.outputs.IMAGE_NAME }}
       NEW_TAG: ${{ steps.retag.outputs.NEW_TAG }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           #fetch-depth: 0
-          ref: develop
+          ref: main
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          #registry: ${{ env.REGISTRY }}
+          #username: ${{ github.actor }}
+          #password: ${{ secrets.GITHUB_TOKEN }}
+
+          username: ${{ vars.APP_IMAGE }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Pull Image
+        id: image
+        shell: bash
+        working-directory: ./manifest/dev
         run: |
-          export IMAGE_TAG=$(git log -2 --format=%H | tail -n 1)
+          export IMAGE_TAG=$(yq e '.spec.template.spec.containers[0].image' ${{ inputs.APP_MANIFEST_FOLDER }}/$DEPLOYMENT_FILE | cut -d ':' -f 2)
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "Previous Image Tag: $IMAGE_TAG"
 
-          echo "Docker Login"
-          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-          docker pull ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:$IMAGE_TAG
+          export IMAGE_NAME=${{ vars.APP_IMAGE }}/tcc-group-5-${{ inputs.SERVICE_NAME }}
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "Image Name: $IMAGE_NAME"
+
+          docker pull $IMAGE_NAME:$IMAGE_TAG
           echo "List Images"
-          docker images | ${{ inputs.SERVICE_NAME }}
+          docker images | grep ${{ inputs.SERVICE_NAME }}
 
       - name: Retag Image
         id: retag
         run: |
-          docker images | ${{ inputs.SERVICE_NAME }}
-          cd ${{ inputs.APP_FOLDER }}
-          echo "Image tag: $IMAGE_TAG"
-          export NEW_TAG=$(jq -r '.version' package.json)
-          echo "New tag: $NEW_TAG"
+          docker images | grep ${{ inputs.SERVICE_NAME }}
+          echo "Previous Image Tag: $IMAGE_TAG"
+          export NEW_TAG="v$(jq -r '.version' package.json)"
+          echo "New Tag: $NEW_TAG"
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
 
-          docker tag ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:$IMAGE_TAG ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:v$NEW_TAG
-          docker push ${{vars.APP_IMAGE}}/tcc-group-5-${{ inputs.SERVICE_NAME }}:v$NEW_TAG
+          docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
+          docker push $IMAGE_NAME:$NEW_TAG
 
   deployment-image:
     name: Deployment Image
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     needs: image-tag
     defaults:
       run:
@@ -73,22 +88,30 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          token: ${{ secrets.GH_PAT }}
 
       - name: Update Deployment
         env:
           NEW_TAG: ${{ needs.image-tag.outputs.NEW_TAG }}
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
-          export APP_IMAGE_URL=${{ vars.APP_IMAGE }}/tcc-group-5-${{ inputs.SERVICE_NAME }}:v$NEW_TAG
-          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE_URL)' $DEPLOYMENT_FILE
+          echo "New Tag: ${{ needs.image-tag.outputs.NEW_TAG }}"
+          export APP_IMAGE="${{ needs.image-tag.outputs.IMAGE_NAME }}:${{ needs.image-tag.outputs.NEW_TAG }}"
+          echo "New Image with Tag: $APP_IMAGE"
+          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
+
           export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
-          echo "Updated image: $UPDATED_IMAGE"
+          echo "Updated Image: $UPDATED_IMAGE"
 
       - name: Commit and Push
+        env:
+          NEW_TAG: ${{ needs.image-tag.outputs.NEW_TAG }}
         run: |
           cd ${{ inputs.APP_MANIFEST_FOLDER }}
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --global user.email "support@dependabot.com"
+          git config --global user.name "dependabot[bot]"
           git add $DEPLOYMENT_FILE
-          git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml [skip ci]"
+          git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
           git push origin main
+          git tag -a $NEW_TAG -m "Tagging version $NEW_TAG"
+          git push origin $NEW_TAG

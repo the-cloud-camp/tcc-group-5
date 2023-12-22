@@ -13,3 +13,4 @@ jobs:
       APP_FOLDER: paybox-statement-api
       SERVICE_NAME: statementapi
       APP_MANIFEST_FOLDER: statementapi
+    secrets: inherit

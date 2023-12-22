@@ -11,8 +11,9 @@ on:
 
 jobs:
   version-frontend:
-    uses: the-cloud-camp/tcc-group-5/.github/workflows/prod-template.yaml@main
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/prod-template.yaml@develop
     with:
       APP_FOLDER: paybox-statement-api
       SERVICE_NAME: statementapi
       APP_MANIFEST_FOLDER: statementapi
+    secrets: inherit

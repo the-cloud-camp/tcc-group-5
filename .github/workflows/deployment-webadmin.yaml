@@ -13,3 +13,4 @@ jobs:
       APP_FOLDER: paybox-next
       SERVICE_NAME: webadmin
       APP_MANIFEST_FOLDER: webadmin
+    secrets: inherit
