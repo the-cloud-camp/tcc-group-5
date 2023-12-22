@@ -11,11 +11,11 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: tcc-01.th1.proen.cloud
+    - host: webadmin-dev.sleeping24hrs.com
 
       http:
         paths:
-          - path: "/group-5-dev/webadmin"
+          - path: "/"
             pathType: Prefix
             backend:
               service:

@@ -29,7 +29,7 @@ spec:
             - name: TZ
               value: Asia/Bangkok
             - name: BASE_PATH
-              value: /group-5-dev/webadmin
+              value: ""
             - name: API_URL
               value: http://authenticationapi-service
             - name: STATEMENT_URL
