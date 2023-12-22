@@ -14,7 +14,7 @@ const Page = () => {
             const result = await signIn("credentials", {
                 ...values,
                 redirect: true,
-                callbackUrl: '/dashboard/user/list'
+                callbackUrl: '/dashboard/statement'
             })
             debugger
             // if (result?.status === 'Success') {

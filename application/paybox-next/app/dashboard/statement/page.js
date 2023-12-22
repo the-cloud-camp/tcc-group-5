@@ -4,11 +4,13 @@ import { Row, Table, Typography, Col, Button } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useSession } from 'next-auth/react'
 import { getStatementList } from './action'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const StatementPage = () => {
     const [statementList, setStatementList] = useState([])
     const { Text } = Typography
+    const router = useRouter()
     const columns = [
         {
             title: 'Date',
@@ -74,7 +76,13 @@ const StatementPage = () => {
             <Col span={24}>
                 <Row justify={'space-between'}>
                     <Text style={{ fontSize: "2rem" }}>Statement list</Text>
-                    <Button type='primary'>สร้าง</Button>
+                    <Button type='primary'
+                        onClick={() => {
+                            console.log('hi')
+                            return router.push('/dashboard/statement/create')}}
+                    >
+                        create
+                    </Button>
                 </Row>
                 <Table dataSource={statementList} columns={columns} />
             </Col>

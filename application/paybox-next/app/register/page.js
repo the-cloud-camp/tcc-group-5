@@ -3,6 +3,7 @@ import React from 'react'
 import { Form, Row, Col, Typography, Checkbox, Button, Input, message } from 'antd'
 import { apiInstance } from '../../utils/apiClient';
 import { useRouter } from 'next/navigation'
+import { register } from './action';
 
 const RegisterPage = () => {
     const router = useRouter();
@@ -11,8 +12,8 @@ const RegisterPage = () => {
     const onFinish = async (values) => {
         try {
             console.log('values', values)
-            const result = await apiInstance().post('/auth/register', values)
-            console.log('result', result)
+            debugger
+            const result = await register(values)
             message.success('Register Success');
             router.push('/login')
             return
