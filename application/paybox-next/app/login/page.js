@@ -1,24 +1,33 @@
 'use client';
-import React from 'react'
-import { Button, Row, Col, Space, Layout, Form, Input, Checkbox, Typography, message } from 'antd';
-import { apiInstance } from '@/utils/apiClient';
+import React, { useState } from 'react'
+import { Button, Row, Col, Form, Input, Checkbox, Typography, message } from 'antd';
 import { useRouter } from 'next/navigation';
-import { login } from './action';
+import { signIn } from 'next-auth/react';
 
 const Page = () => {
+    const [isLoading, setIsLoading] = useState(false)
     const router = useRouter();
     const { Text } = Typography
+
     const onFinish = async (values) => {
         try {
-            const result = await login(values)
+            setIsLoading(true)
+            // const result = await login(values)
+            const result = await signIn("credentials", {
+                ...values,
+                redirect: true,
+                callbackUrl: '/dashboard/statement'
+            })
             debugger
-            if (result?.status === 'Success') {
-                message.success('login success')
-                console.log('Success:', values);
-                router.push('/user/me')
-            }
+            setIsLoading(false)
+            // if (result?.status === 'Success') {
+            //     message.success('login success')
+            //     console.log('Success:', values);
+            //     router.push('/user/me')
+            // }
         } catch (err) {
             console.log('err', err)
+            setIsLoading(false)
             message.error('Err!!')
             return
         }
@@ -56,7 +65,7 @@ const Page = () => {
                 >
                     <Form.Item
                         label="Email"
-                        name="email"
+                        name="emailOrMobile"
                         rules={[
                             {
                                 required: true,
@@ -97,7 +106,7 @@ const Page = () => {
                             span: 16,
                         }}
                     >
-                        <Button type="primary" htmlType="submit">
+                        <Button loading={isLoading} type="primary" htmlType="submit">
                             Submit
                         </Button>
                         <Button type='link' onClick={() => {

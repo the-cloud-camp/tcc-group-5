@@ -1,7 +1,6 @@
-'use server'
-import axios from 'axios';
-// import { cookies } from 'next/headers'
 
+import axios from 'axios';
+// import { cookies } from 'next/headers';
 
 export const apiInstance = () => {
     // const cookieStore = cookies();
@@ -17,3 +16,13 @@ export const apiInstance = () => {
 
     return instance
 };
+export const statementInstance = () => {
+    const instance = axios.create({
+        baseURL: process.env.STATEMENT_URL,
+        // headers: {
+        //     Authorization: token ?? `Bearer ${token}`
+        // }
+    });
+
+    return instance
+}
