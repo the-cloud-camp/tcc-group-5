@@ -6,6 +6,7 @@ const {
   getStatementsBySource,
   getStatementById,
   createStatement,
+  updateStateMent,
 } = require('../controller/statement-controller');
 
 // GET STATEMENT by source (from USER ID)
@@ -15,6 +16,7 @@ const {
 // console.log(typeof getStatementsBySource);
 router.get('/history/:userId', getStatementsBySource);
 router.get('/:statementId', getStatementById);
+router.patch('/:statementId', updateStateMent);
 router.post('/', createStatement);
 
 module.exports = router;
