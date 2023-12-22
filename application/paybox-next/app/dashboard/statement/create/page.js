@@ -1,10 +1,12 @@
 'use client'
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Row, Col, Form, Input, Skeleton, Typography, Select, Button, message, InputNumber } from 'antd'
 import { createStatement } from './action'
 
 const CreateStatementpage = () => {
+    const { data: session } = useSession()
     const { Title, Text } = Typography
     const router = useRouter();
     const [statementDetail, setStatementDetail] = useState();
@@ -14,7 +16,7 @@ const CreateStatementpage = () => {
             console.log('values', values)
             const body = {
                 ...values,
-                source: "adsd-xdasd-asdad"
+                source: session.user.id
             }
             debugger
             const submit = await createStatement(body)
@@ -46,7 +48,7 @@ const CreateStatementpage = () => {
                     layout='horizontal'
                     onFinish={handleSubmit}
                 >
-                    <Form.Item name={"type"} label="type"
+                    <Form.Item name={"type"} label="Type"
                         rules={[{
                             required: true,
                             message: "select your type"
@@ -58,29 +60,51 @@ const CreateStatementpage = () => {
                             <Select.Option value={'withdraw'}>withdraw</Select.Option>
                         </Select>
                     </Form.Item>
-                    <Form.Item name={"amount"} label="amount"
-                     rules={[{
-                        required: true,
-                        message: "required amount"
-                    }]}
+                    <Form.Item noStyle shouldUpdate={(prev, cur) => prev.type !== cur.type}>
+                        {
+                            ({ getFieldValue }) => {
+                                if (getFieldValue('type') === 'transfer') {
+                                    return <Form.Item name={'destination'} label={'Destination'}>
+                                        <Input />
+                                    </Form.Item>
+                                }
+                            }
+                        }
+                    </Form.Item>
+                    <Form.Item name={'paymentMethod'} label="Payment method">
+                        <Select>
+                            <Select.Option value={'credit_card'}>credit card</Select.Option>
+                            <Select.Option value={'bank_transfer'}>bank transfer</Select.Option>
+                            <Select.Option value={'cash'}>cash</Select.Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name={"amount"} label="Amount"
+                        rules={[{
+                            required: true,
+                            message: "required amount"
+                        }]}
                     >
                         <InputNumber />
                     </Form.Item>
-                    <Form.Item name={"currency"} label="currency"
-                     rules={[{
-                        required: true,
-                        message: "required currency"
-                    }]}
+                    <Form.Item name={"currency"} label="Currency"
+                        rules={[{
+                            required: true,
+                            message: "required currency"
+                        }]}
                     >
-                        <Input  />
+                        <Select>
+                            <Select.Option value={'USD'}>USD</Select.Option>
+                            <Select.Option value={'EUR'}>EUR</Select.Option>
+                            <Select.Option value={'THB'}>THB</Select.Option>
+                        </Select>
                     </Form.Item>
-                    <Form.Item name={'description'} label="description"
-                     rules={[{
-                        required: true,
-                        message: "required description"
-                    }]}
+                    <Form.Item name={'description'} label="Description"
+                        rules={[{
+                            required: true,
+                            message: "required description"
+                        }]}
                     >
-                        <Input  />
+                        <Input />
                     </Form.Item>
                     <Row justify={'center'}>
                         <Col span={12}>

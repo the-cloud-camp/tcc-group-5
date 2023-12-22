@@ -45,9 +45,11 @@ const StatementPage = () => {
             render: (_, record) => {
                 console.log('record', record)
                 return (
-                    <Link href={`/dashboard/statement/${record.id}`}>
-                        <SearchOutlined />
-                    </Link>
+                    <Row justify={'space-between'}>
+                        <Link href={`/dashboard/statement/${record.id}`}>
+                            <SearchOutlined />
+                        </Link>
+                    </Row>
                 )
             }
         },
@@ -57,7 +59,7 @@ const StatementPage = () => {
         try {
             setIsLoading(true)
             // const result = await statementInstance().get(`/statement/history/${session.user.id}`);
-            const result = await getStatementList();
+            const result = await getStatementList(session.user.id);
             console.log('result aaa', result)
             setStatementList(result)
             setIsLoading(false)
