@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: webadmin-container
-          image: zaserzafear/paybox-webadmin:latest
+          image: jirasinm/tcc-group-5-webadmin:dev-87aded4
           imagePullPolicy: IfNotPresent
           resources:
             limits:
