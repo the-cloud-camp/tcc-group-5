@@ -82,7 +82,7 @@ const layout = ({ children }) => {
                         textAlign: 'center',
                     }}
                 >
-                    Ant Design ©2023 Created by Ant UED
+                    PAYBox ©2023
                 </Footer>
             </Layout>
         </Layout>

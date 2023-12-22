@@ -1,9 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { Row, Table, Typography, Col, Button } from 'antd'
-import { statementInstance } from '@/utils/apiClient'
+import { SearchOutlined } from '@ant-design/icons'
 import { useSession } from 'next-auth/react'
 import { getStatementList } from './action'
+import Link from 'next/link'
 
 const StatementPage = () => {
     const [statementList, setStatementList] = useState([])
@@ -35,9 +36,17 @@ const StatementPage = () => {
             key: 'status',
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
+            title: 'Action',
+            dataIndex: 'action',
             key: 'address',
+            render: (_, record) => {
+                console.log('record', record)
+                return (
+                    <Link href={`/dashboard/statement/${record.id}`}>
+                        <SearchOutlined />
+                    </Link>
+                )
+            }
         },
     ];
     const { data: session, status } = useSession();
@@ -49,14 +58,13 @@ const StatementPage = () => {
             setStatementList(result)
             return
         } catch (err) {
-            console.log('err user', err)
+            console.log('err', err)
             return
         }
     }
 
     useEffect(() => {
         if (session) {
-            debugger
             getListStatement()
         }
     }, [session])
