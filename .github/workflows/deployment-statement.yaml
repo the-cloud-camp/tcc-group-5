@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - 'application/paybox-statement-api/**'
+    branches-ignore:
+      - 'develop'
+      - 'main'
   workflow_dispatch:
 
 jobs:

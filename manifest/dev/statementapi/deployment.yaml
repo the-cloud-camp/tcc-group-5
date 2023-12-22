@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: authenticationapi-deployment
+  name: statementapi-deployment
   namespace: group-5-dev
   labels:
-    app: authenticationapi
+    app: statementapi
 spec:
   selector:
     matchLabels:
-      app: authenticationapi
+      app: statementapi
   template:
     metadata:
       labels:
-        app: authenticationapi
+        app: statementapi
     spec:
       containers:
-        - name: authenticationapi-container
-          image: "jirasinm/tcc-group-5-auth:dev-d818ea1"
+        - name: statementapi-container
+          image: zaserzafear/tcc-01-statement-api:latest
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -26,15 +26,11 @@ spec:
               cpu: 150m
               memory: 256Mi
           ports:
-            - containerPort: 5001
+            - containerPort: 8000
           env:
             - name: TZ
               value: Asia/Bangkok
             - name: DATABASE_URL
-              value: "postgres://paybox:group-5@postgres-service:5432/paybox"
-            - name: JWT_EXPIRE
-              value: 1d
-            - name: JWT_SECRET_KEY
-              value: G5aIoG4QG1rLZ6qyv6RLTSggT7Tno8XH
+              value: "mongodb://mongodb-service:27017"
             - name: PORT
-              value: "5001"
+              value: "8000"

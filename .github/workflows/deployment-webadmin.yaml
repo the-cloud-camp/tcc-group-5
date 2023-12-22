@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - 'application/paybox-next/**'
+    branches-ignore:
+      - 'develop'
+      - 'main'
   workflow_dispatch:
 
 jobs:

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paybox-mongodb-pvc
+  namespace: group-5-prod
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: paybox-mongodb-prod-pv
+  storageClassName: paybox-local-storage

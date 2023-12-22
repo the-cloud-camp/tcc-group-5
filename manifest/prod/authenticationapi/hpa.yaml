@@ -1,12 +1,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: authenticationapi-argo-hpa-prod
+  name: authenticationapi-hpa
+  namespace: group-5-prod
+  labels:
+    app: authenticationapi
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: authenticationapi-argo-deployment-prod
+    name: authenticationapi-deployment
   minReplicas: 1
   maxReplicas: 5
   metrics:

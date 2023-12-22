@@ -1,15 +1,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: authenticationapi-hpa
-  namespace: group-5-dev
+  name: webadmin-hpa
+  namespace: group-5-prod
   labels:
-    app: authenticationapi
+    app: webadmin
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: authenticationapi-deployment
+    name: webadmin-deployment
   minReplicas: 1
   maxReplicas: 5
   metrics:

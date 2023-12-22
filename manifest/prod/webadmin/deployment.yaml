@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webadmin-deployment
-  namespace: group-5-dev
+  namespace: group-5-prod
 spec:
   selector:
     matchLabels:
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: webadmin-container
-          image: jirasinm/tcc-group-5-webadmin:dev-29dd378
+          image: jirasinm/tcc-group-5-webadmin:dev-87aded4
           imagePullPolicy: IfNotPresent
           resources:
             limits:
