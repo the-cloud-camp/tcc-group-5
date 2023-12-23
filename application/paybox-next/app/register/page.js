@@ -10,8 +10,6 @@ const RegisterPage = () => {
 
     const onFinish = async (values) => {
         try {
-            console.log('values', values)
-            debugger
             const result = await register(values)
             message.success('Register Success');
             router.push('/login')
@@ -88,7 +86,7 @@ const RegisterPage = () => {
                     </Form.Item>
                     <Form.Item
                         label="First Name"
-                        name="firstname"
+                        name="firstName"
                         rules={[
                             {
                                 required: true,
