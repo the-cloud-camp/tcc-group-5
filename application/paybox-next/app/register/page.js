@@ -1,7 +1,6 @@
 'use client'
 import React from 'react'
 import { Form, Row, Col, Typography, Checkbox, Button, Input, message } from 'antd'
-import { apiInstance } from '../../utils/apiClient';
 import { useRouter } from 'next/navigation'
 import { register } from './action';
 
