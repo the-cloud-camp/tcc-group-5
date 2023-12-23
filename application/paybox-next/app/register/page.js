@@ -112,10 +112,12 @@ const RegisterPage = () => {
 
                     <Form.Item
                     >
-                        <Button onClick={() => router.back()}>back</Button>
-                        <Button type="primary" htmlType="submit">
-                            register
-                        </Button>
+                        <Row justify={'space-between'}>
+                            <Button onClick={() => router.back()}>back</Button>
+                            <Button type="primary" htmlType="submit">
+                                register
+                            </Button>
+                        </Row>
                     </Form.Item>
                 </Form>
             </Col>
