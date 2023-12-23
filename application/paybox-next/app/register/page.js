@@ -3,6 +3,7 @@ import React from 'react'
 import { Form, Row, Col, Typography, Checkbox, Button, Input, message } from 'antd'
 import { useRouter } from 'next/navigation'
 import { register } from './action';
+import { BUILD_ID_FILE } from 'next/dist/shared/lib/constants';
 
 const RegisterPage = () => {
     const router = useRouter();
@@ -10,8 +11,6 @@ const RegisterPage = () => {
 
     const onFinish = async (values) => {
         try {
-            console.log('values', values)
-            debugger
             const result = await register(values)
             message.success('Register Success');
             router.push('/login')
@@ -88,7 +87,7 @@ const RegisterPage = () => {
                     </Form.Item>
                     <Form.Item
                         label="First Name"
-                        name="firstname"
+                        name="firstName"
                         rules={[
                             {
                                 required: true,
@@ -113,9 +112,12 @@ const RegisterPage = () => {
 
                     <Form.Item
                     >
-                        <Button type="primary" htmlType="submit">
-                            register
-                        </Button>
+                        <Row justify={'space-between'}>
+                            <Button onClick={() => router.back()}>back</Button>
+                            <Button type="primary" htmlType="submit">
+                                register
+                            </Button>
+                        </Row>
                     </Form.Item>
                 </Form>
             </Col>
