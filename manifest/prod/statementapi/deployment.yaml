@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: statementapi-container
-          image: zaserzafear/tcc-01-statement-api:latest
+          image: jirasinm/tcc-group-5-statementapi:v1.0.1
           imagePullPolicy: IfNotPresent
           resources:
             limits:
