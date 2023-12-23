@@ -6,7 +6,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'application/paybox-auth-api/package.json'
+      - 'application/paybox-auth-api/**'
   workflow_dispatch:
 
 jobs:
