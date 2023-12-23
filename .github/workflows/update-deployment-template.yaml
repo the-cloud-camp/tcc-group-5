@@ -110,6 +110,7 @@ jobs:
           git config --global user.email "support@dependabot.com"
           git config --global user.name "dependabot[bot]"
           git branch
+          git pull
           git add $DEPLOYMENT_FILE
           git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
           git push
