@@ -6,7 +6,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'application/paybox-next/package.json'
+      - 'application/paybox-next/**'
   workflow_dispatch:
 
 jobs:
