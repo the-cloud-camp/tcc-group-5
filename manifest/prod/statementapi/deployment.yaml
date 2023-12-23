@@ -34,3 +34,5 @@ spec:
               value: "mongodb://mongodb-service:27017"
             - name: PORT
               value: "8000"
+            - name: JWT_SECRET_KEY
+              value: G5aIoG4QG1rLZ6qyv6RLTSggT7Tno8XH
