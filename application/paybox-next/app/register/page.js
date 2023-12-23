@@ -3,6 +3,7 @@ import React from 'react'
 import { Form, Row, Col, Typography, Checkbox, Button, Input, message } from 'antd'
 import { useRouter } from 'next/navigation'
 import { register } from './action';
+import { BUILD_ID_FILE } from 'next/dist/shared/lib/constants';
 
 const RegisterPage = () => {
     const router = useRouter();
@@ -111,6 +112,7 @@ const RegisterPage = () => {
 
                     <Form.Item
                     >
+                        <Button onClick={() => router.back()}>back</Button>
                         <Button type="primary" htmlType="submit">
                             register
                         </Button>
