@@ -4,6 +4,13 @@ on:
   push:
     paths:
       - 'application/paybox-statement-api/**'
+    branches:
+      - 'release/**'
+      - 'feat/**'
+      - 'chore/**'
+      - 'jui**'
+      - 'we**'
+      - 'nest**'
   workflow_dispatch:
 
 jobs:
