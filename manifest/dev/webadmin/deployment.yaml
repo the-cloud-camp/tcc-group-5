@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: webadmin-container
-          image: jirasinm/tcc-group-5-webadmin:dev-c2f9a4a
+          image: jirasinm/tcc-group-5-webadmin:dev-3446e31
           imagePullPolicy: IfNotPresent
           resources:
             limits:
