@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-sts
+  namespace: group-5-prod
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      nodeName: node55874-tcc-01.th1.proen.cloud
+      containers:
+        - name: postgres-container
+          image: postgres:16.0
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          env:
+            - name: TZ
+              value: Asia/Bangkok
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb-vol
+      volumes:
+        - name: postgredb-vol
+          persistentVolumeClaim:
+            claimName: paybox-postgres-pvc

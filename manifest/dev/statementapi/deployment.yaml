@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statementapi-deployment
+  namespace: group-5-dev
+  labels:
+    app: statementapi
+spec:
+  selector:
+    matchLabels:
+      app: statementapi
+  template:
+    metadata:
+      labels:
+        app: statementapi
+    spec:
+      containers:
+        - name: statementapi-container
+          image: jirasinm/tcc-group-5-statementapi:dev-3e24b9e
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 250m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          ports:
+            - containerPort: 8000
+          env:
+            - name: TZ
+              value: Asia/Bangkok
+            - name: DATABASE_URL
+              value: "mongodb://mongodb-service:27017"
+            - name: PORT
+              value: "8000"

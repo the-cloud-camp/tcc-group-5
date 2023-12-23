@@ -1,0 +1,23 @@
+name: Update Statement Deployment
+
+on:
+  push:
+    paths:
+      - 'application/paybox-statement-api/**'
+    branches:
+      - 'release/**'
+      - 'feat/**'
+      - 'chore/**'
+      - 'jui**'
+      - 'we**'
+      - 'nest**'
+  workflow_dispatch:
+
+jobs:
+  deployment-auth:
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-statement-api
+      SERVICE_NAME: statementapi
+      APP_MANIFEST_FOLDER: statementapi
+    secrets: inherit

@@ -1,0 +1,129 @@
+name: Update Version Template
+
+on:
+  workflow_call:
+    inputs:
+      APP_FOLDER:
+        required: true
+        description: 'Folder name of the service under application folder'
+        type: string
+
+env:
+  VERSION_FILE: package.json
+
+defaults:
+  run:
+    working-directory: ./application
+
+jobs:
+  check-version:
+    name: Check Version
+    runs-on: ubuntu-latest
+    outputs:
+      CURRENT_VERSION: ${{ steps.current-version.outputs.CURRENT_VERSION }}
+      MAJOR: ${{ steps.current-version.outputs.MAJOR }}
+      MINOR: ${{ steps.current-version.outputs.MINOR }}
+      BUILD: ${{ steps.current-version.outputs.BUILD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Check Current Version
+        id: current-version
+        run: |
+          cd ${{ inputs.APP_FOLDER }}
+          CURRENT_VERSION=$(jq -r '.version' $VERSION_FILE)
+          echo "CURRENT_VERSION=$CURRENT_VERSION"
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          export MAJOR=$(echo $CURRENT_VERSION | cut -d "." -f 1)
+          export MINOR=$(echo $CURRENT_VERSION | cut -d "." -f 2)
+          export BUILD=$(echo $CURRENT_VERSION | cut -d "." -f 3)
+          echo "MAJOR=$(echo $MAJOR)" >> $GITHUB_ENV
+          echo "MINOR=$(echo $MINOR)" >> $GITHUB_ENV
+          echo "BUILD=$(echo $BUILD)" >> $GITHUB_ENV
+          echo "MAJOR=$(echo $MAJOR)" >> $GITHUB_OUTPUT
+          echo "MINOR=$(echo $MINOR)" >> $GITHUB_OUTPUT
+          echo "BUILD=$(echo $BUILD)" >> $GITHUB_OUTPUT
+
+      - name: Show Current Version
+        run: |
+          echo "The current version: $MAJOR.$MINOR.$BUILD"
+
+  update-version:
+    name: Update Version
+    runs-on: ubuntu-latest
+    needs: check-version
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Check Branch
+        id: current-branch
+        env:
+          CURRENT_VERSION: ${{ needs.check-version.outputs.CURRENT_VERSION }}
+          MAJOR: ${{ needs.check-version.outputs.MAJOR }}
+          MINOR: ${{ needs.check-version.outputs.MINOR }}
+          BUILD: ${{ needs.check-version.outputs.BUILD }}
+        run: |
+          echo "currentVersion: $CURRENT_VERSION"
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
+          echo "MAJOR=$(echo $MAJOR)" >> $GITHUB_ENV
+          echo "MINOR=$(echo $MINOR)" >> $GITHUB_ENV
+          echo "BUILD=$(echo $BUILD)" >> $GITHUB_ENV
+
+          CURRENT_BRANCH=$(git branch --show-current)
+          echo "CURRENT_BRANCH=$(echo $CURRENT_BRANCH)" >> $GITHUB_ENV
+          echo "Current branch is $CURRENT_BRANCH"
+
+          if [[ $CURRENT_BRANCH == "develop" ]]; then
+            echo "You are in the develop branch"
+          else
+            echo "Chaging branch to develop"
+            git checkout -f develop
+          fi
+
+      - name: Update Version
+        run: |
+          echo "Current branch is $CURRENT_BRANCH"
+
+          if [[ ${{ github.head_ref }} == "release"* ]]; then
+            echo "Adding major version by 1"
+            MAJOR=$(( MAJOR + 1 ))
+            echo "Updated MAJOR: $MAJOR"
+          elif [[ ${{ github.head_ref }} == "feat"* ]]; then
+            echo "Adding minor version by 1"
+            MINOR=$(( MINOR + 1 ))
+            echo "Updated MINOR: $MINOR"
+          else
+            echo "Adding build version by 1"
+            BUILD=$(( BUILD + 1 ))
+            echo "Updated BUILD: $BUILD"
+          fi
+
+          export UPDATED_VERSION=$MAJOR.$MINOR.$BUILD
+          echo "The updated version: $UPDATED_VERSION"
+          echo "UPDATED_VERSION=$(echo $UPDATED_VERSION)" >> $GITHUB_ENV
+
+          echo "Update version to package.json"
+          cd ${{ inputs.APP_FOLDER }}
+          yq -i '.version = strenv(UPDATED_VERSION)' $VERSION_FILE
+          echo "Version in package.json is $(jq -r '.version' $VERSION_FILE)"
+
+      - name: Commit and Tag
+        run: |
+          echo "Current branch is $CURRENT_BRANCH"
+          git config --global user.email "support@dependabot.com"
+          git config --global user.name "dependabot[bot]"
+          git add ./${{ inputs.APP_FOLDER }}/$VERSION_FILE
+          git commit -m "bot: update package.json [skip ci]"
+          git push origin develop
+#git tag -a v$UPDATED_VERSION -m "Tagging version v$UPDATED_VERSION"
+#git push origin v$UPDATED_VERSION

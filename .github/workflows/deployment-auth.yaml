@@ -1,0 +1,23 @@
+name: Update Auth Deployment
+
+on:
+  push:
+    paths:
+      - 'application/paybox-auth-api/**'
+    branches:
+      - 'release/**'
+      - 'feat/**'
+      - 'chore/**'
+      - 'jui**'
+      - 'we**'
+      - 'nest**'
+  workflow_dispatch:
+
+jobs:
+  deployment-auth:
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-auth-api
+      SERVICE_NAME: auth
+      APP_MANIFEST_FOLDER: authenticationapi
+    secrets: inherit

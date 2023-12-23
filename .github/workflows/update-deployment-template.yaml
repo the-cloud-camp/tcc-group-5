@@ -1,0 +1,154 @@
+name: Update Deployment Template
+
+on:
+  workflow_call:
+    inputs:
+      APP_FOLDER:
+        required: true
+        description: 'Folder name of the service under application folder'
+        type: string
+      SERVICE_NAME:
+        required: true
+        description: 'Name of the service for container image. Format: <owner>/tcc-group-5-<SERVICE_NAME>:<tag>'
+        type: string
+      APP_MANIFEST_FOLDER:
+        required: true
+        description: 'Folder name of the service under manifest/<env> folder'
+        type: string
+
+env:
+  DEPLOYMENT_FILE: deployment.yaml
+  #REGISTRY: ghcr.io # Use docker.io (docker hub) if empty
+  #IMAGE_NAME: ${{ github.repository }} # github.repository as <account>/<repo>
+
+  #CLUSTER_NAME: https://tcc-01.th1.proen.cloud/api/
+
+jobs:
+  containerize:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+    defaults:
+      run:
+        working-directory: ./application
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        #with:
+        #  ref: develop
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          #images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ vars.APP_IMAGE }}/tcc-group-5-${{ inputs.SERVICE_NAME }}
+          tags: |
+            type=sha,prefix=dev-
+
+      #- name: Get tag
+      #  id: meta-tag
+      #  run: |
+      #    echo "$DOCKER_METADATA_OUTPUT_TAGS"
+      #    echo "META_TAG=$DOCKER_METADATA_OUTPUT_TAGS" >> $GITHUB_OUTPUT
+          
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          #registry: ${{ env.REGISTRY }}
+          #username: ${{ github.actor }}
+          #password: ${{ secrets.GITHUB_TOKEN }}
+
+          username: ${{ vars.APP_IMAGE }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./application/${{ inputs.APP_FOLDER }}
+          file: ./application/${{ inputs.APP_FOLDER }}/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
+  k8s-deployment:
+    needs: containerize
+    name: Update Deployment
+    runs-on: ubuntu-latest    
+    defaults:
+      run:
+        working-directory: ./manifest/dev
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          #ref: develop
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Check Tag
+        run: |
+          echo "${{ needs.containerize.outputs.image_tag }}"
+      
+      - name: Update Deployment
+        run: |
+          cd ${{ inputs.APP_MANIFEST_FOLDER }}
+          echo "${{ needs.containerize.outputs.image_tag }}"
+          export APP_IMAGE=${{ needs.containerize.outputs.image_tag }}
+          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE)' $DEPLOYMENT_FILE
+
+          export UPDATED_IMAGE=$(yq '.spec.template.spec.containers[0].image' $DEPLOYMENT_FILE)
+          echo "Updated image: $UPDATED_IMAGE"
+
+      - name: Commit and Push
+        run: |
+          cd ${{ inputs.APP_MANIFEST_FOLDER }}
+          git config --global user.email "support@dependabot.com"
+          git config --global user.name "dependabot[bot]"
+          git branch
+          git pull
+          git add $DEPLOYMENT_FILE
+          git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
+          git push
+
+#  deploy-to-develop:
+#    needs: containerize
+#    runs-on: ubuntu-latest
+#    environment: develop
+
+#    defaults:
+#      run:
+#        working-directory: ./manifest/dev
+
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+
+#     - name: Set up Kube Config
+#        run: |
+#          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+#          mkdir -p $HOME/.kube
+#          mv kubeconfig $HOME/.kube/config
+
+#      - name: Set KUBE_CONTEXT
+#        run: |
+#          kubectl config use-context "${{ secrets.KUBE_CONTEXT }}"
+
+#      - name: Update Deployment to k8s
+#        run: |
+#          export APP_IMAGE_URL=${{ vars.APP_IMAGE }}:${{ github.sha }}
+#          yq -i '.spec.template.spec.containers[0].image = strenv(APP_IMAGE_URL)' deployment.yaml
+#          kubectl apply -f deployment.yaml -n ${{ secrets.KUBE_NAMESPACE }}
+
+#      - name: Commit and push changes
+#        run: |
+#          git checkout develop
+#          git config --local user.email "actions@github.com"
+#          git config --local user.name "GitHub Actions"
+#          git add deployment.yaml
+#          git commit -m "bot: update deployment ${{ github.sha }}"
+#          git push

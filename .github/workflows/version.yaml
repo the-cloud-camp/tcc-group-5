@@ -1,0 +1,30 @@
+name: Update Version
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'develop'
+  workflow_dispatch:
+
+jobs:
+  version-auth:
+    if: contains(github.head_ref, 'auth')
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-version-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-auth-api
+    secrets: inherit
+
+  version-webadmin:
+    if: contains(github.head_ref, 'web')
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-version-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-next
+    secrets: inherit
+
+  version-statement:
+    if: contains(github.head_ref, 'state')
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-version-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-statement-api
+    secrets: inherit

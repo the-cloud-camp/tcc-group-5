@@ -1,0 +1,19 @@
+name: Update Prod Deployment Statement
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'main'
+    paths:
+      - 'application/paybox-statement-api/package.json'
+  workflow_dispatch:
+
+jobs:
+  version-frontend:
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/prod-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-statement-api
+      SERVICE_NAME: statementapi
+      APP_MANIFEST_FOLDER: statementapi
+    secrets: inherit

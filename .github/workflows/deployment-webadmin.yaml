@@ -1,0 +1,23 @@
+name: Update Web Admin Deployment
+
+on:
+  push:
+    paths:
+      - 'application/paybox-next/**'
+    branches:
+      - 'release/**'
+      - 'feat/**'
+      - 'chore/**'
+      - 'jui**'
+      - 'we**'
+      - 'nest**'
+  workflow_dispatch:
+
+jobs:
+  deployment-auth:
+    uses: the-cloud-camp/tcc-group-5/.github/workflows/update-deployment-template.yaml@develop
+    with:
+      APP_FOLDER: paybox-next
+      SERVICE_NAME: webadmin
+      APP_MANIFEST_FOLDER: webadmin
+    secrets: inherit
