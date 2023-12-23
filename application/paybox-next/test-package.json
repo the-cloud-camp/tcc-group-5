@@ -1,5 +1,5 @@
 {
-    "name": "paybox-auth-service",
+    "name": "paybox-webadmin-service",
     "version": "1.0.9",
     "description": "tested new",
     "main": "index.js"

@@ -1,5 +1,5 @@
 {
-    "name": "paybox-auth-service",
+    "name": "paybox-statement-api",
     "version": "1.0.9",
     "description": "tested new",
     "main": "index.js"
