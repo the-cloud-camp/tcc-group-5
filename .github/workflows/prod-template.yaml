@@ -113,5 +113,5 @@ jobs:
           git add $DEPLOYMENT_FILE
           git commit -m "bot: update ${{ inputs.SERVICE_NAME }} image in deployment.yaml"
           git push origin main
-          git tag -a $NEW_TAG -m "Tagging version $NEW_TAG"
+          git tag -a ${{ inputs.SERVICE_NAME }}-$NEW_TAG -m "Tagging version $NEW_TAG"
           git push origin $NEW_TAG
