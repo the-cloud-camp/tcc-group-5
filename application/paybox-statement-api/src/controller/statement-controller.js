@@ -44,3 +44,19 @@ exports.createStatement = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updateStateMent = async (req, res, next) => {
+  const { statementId } = req.params;
+  // update to succuss
+  console.log('statementId', statementId);
+  try {
+    const statement = await Statement.findByIdAndUpdate(
+      statementId,
+      { status: 'success' },
+      { new: true }
+    );
+    res.status(200).json({ ...statement, status: 'success' });
+  } catch (error) {
+    next(error);
+  }
+};
